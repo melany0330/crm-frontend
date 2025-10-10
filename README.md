@@ -1,28 +1,4 @@
-#  WMS Frontend E-Commerce
-
-Este es el proyecto de frontend del grupo numero 5, que consta de de una plantilla para comercio electronico Bootstrap versátil y flexible con una licencia regular.
-
-## Autores
-
-**WMS** – (Frontend developer)
-
-- **W**ilson Martín Cabrera Juárez
-- **M**elany Belen Ambrocio Nelson
-- **S**ebastian Rocop Quemé
-
----
-
-## Tecnologías usadas
-
-- [ReactJS](https://reactjs.org/)
-- [ViteJS](https://vitejs.dev/)
-- [Bootstrap 5](https://getbootstrap.com/)
-- HTML5, CSS3, JavaScript (ES6+)
-
-## Licencia
-
-Este proyecto utiliza una plantilla de pago bajo una licencia regular de uso de ThemeForest.
-No se permite la redistribución, sublicencia o reventa del código fuente original.
+#  CRM
 
 ### Prerrequisitos
 
