@@ -1,45 +1,106 @@
+// src/core/service/ServerService.js
 import axios from "axios";
 import APIUtil from "../system/APIUtil";
 
-/**
- * Clase encargada de gestionar las peticiones al servidor.
- * 
- * @author wil
- */
+const isBrowser = typeof window !== "undefined";
+
+// ===== Config de base (Vite + fallback) =====
+const PROTOCOL =
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_PROTOCOL) || "http";
+const HOST =
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_NAME) ||
+  (isBrowser ? window.location.hostname : "localhost");
+const PORT =
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_PORT) || "8080";
+
+const BASE_URL = `${PROTOCOL}://${HOST}:${PORT}`;
+
+// ===== Helpers de autenticación =====
+export function getAuthToken() {
+  try {
+    if (APIUtil && typeof APIUtil.getAuthToken === "function") {
+      const t = APIUtil.getAuthToken();
+      if (t) return t;
+    }
+  } catch {}
+  if (!isBrowser) return null;
+  return (
+    localStorage.getItem("authToken") ||
+    localStorage.getItem("token") ||
+    localStorage.getItem("accessToken") ||
+    null
+  );
+}
+
+function decodeJwtPayload(token) {
+  try {
+    const [, payload] = token.split(".");
+    const json = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(decodeURIComponent(escape(json)));
+  } catch {
+    return null;
+  }
+}
+
+export function getAuthUserName() {
+  // 1) APIUtil si existe
+  try {
+    if (APIUtil && typeof APIUtil.getAuthUserName === "function") {
+      const u = APIUtil.getAuthUserName();
+      if (u) return u;
+    }
+  } catch {}
+  // 2) localStorage guardado por tu AuthService
+  if (isBrowser) {
+    const u = localStorage.getItem("user");
+    if (u) return u;
+  }
+  // 3) intenta del JWT (claims comunes: username, preferred_username)
+  const t = getAuthToken();
+  const p = t ? decodeJwtPayload(t) : null;
+  return p?.username || p?.preferred_username || null;
+}
+
+export function getAuthUserId() {
+  // 1) APIUtil si existe
+  try {
+    if (APIUtil && typeof APIUtil.getAuthUserId === "function") {
+      const id = APIUtil.getAuthUserId();
+      if (id) return Number(id);
+    }
+  } catch {}
+  // 2) localStorage (si alguna vez lo guardaste)
+  if (isBrowser) {
+    const key =
+      localStorage.getItem("userId") ||
+      localStorage.getItem("idUser") ||
+      localStorage.getItem("idUsuario");
+    if (key) return Number(key);
+  }
+  // 3) intenta del JWT (claims comunes)
+  const t = getAuthToken();
+  const p = t ? decodeJwtPayload(t) : null;
+  const guess = p?.id ?? p?.userId ?? p?.idUser ?? p?.idUsuario ?? p?.sub;
+  return guess ? Number(guess) : null;
+}
+
+// ===== Servicio HTTP =====
 class ServerService {
-    constructor() { }
+  authSend(url, method = "GET", data = null, customHeaders = {}) {
+    const token = getAuthToken();
+    return this.send(url, method, token, data, customHeaders);
+  }
 
-    authSend(url, method = 'GET', data = null) {
-        const token = APIUtil.getAuthToken();
-        return this.send(url, method, token, data);
-    }
+  send(url, method = "GET", token = null, data = null, customHeaders = {}) {
+    const headers = ServerService.#createHeaders(token, customHeaders);
+    return axios({ method, url: `${BASE_URL}${url}`, data, headers });
+  }
 
-
-    send(url, method = 'GET', token = null, data = null, customHeaders = {}) {
-        if (!process.env.VITE_WMS_NAME || !process.env.VITE_WMS_PORT) {
-            throw new Error('WMS_NAME and WMS_PORT must be defined in the environment variables');
-        }
-
-        const uri = `${process.env.VITE_WMS_PROTOCOL}://${process.env.VITE_WMS_NAME}:${process.env.VITE_WMS_PORT}${url}`;
-        const headers = ServerService.#createHeaders(token, customHeaders);
-
-        return axios({
-            method: method,
-            url: uri,
-            data: data,
-            headers: headers
-        });
-    }
-
-    static #createHeaders(token, customHeaders) {
-        const headers = { ...customHeaders };
-
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        return headers;
-    }
+  static #createHeaders(token, customHeaders) {
+    const headers = { "Content-Type": "application/json", ...customHeaders };
+    if (token) headers.Authorization = `Bearer ${token}`;
+    return headers;
+  }
 }
 
 export default ServerService;
