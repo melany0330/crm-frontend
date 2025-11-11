@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import HeaderAdminNav from "../navigation/HeaderAdminNav";
 import AuthService from "../../service/auth/AuthService";
 import APIUtil from "../../core/system/APIUtil";
+import UserRoleDisplay from "../user/UserRoleDisplay";
 
 const HeaderSection2 = ({ session }) => {
   const { isHeaderFixed } = useContext(FarzaaContext);
@@ -17,19 +18,19 @@ const HeaderSection2 = ({ session }) => {
 
   const handleLogoutSubmit = (e) => {
     e.preventDefault();
-    
+
     const authService = new AuthService();
     authService.logout()
-    .then(() => {
-      authService.clearToken();      
-      APIUtil.redirectIfNotAuthenticated(navigate);
+      .then(() => {
+        authService.clearToken();
+        APIUtil.redirectIfNotAuthenticated(navigate);
 
-      toast.success('Sesión cerrada correctamente.', { position: 'top-right' });
-    })
-    .catch((error) => {
-      console.error('Logout failed:', error);
-      toast.error('Error al cerrar sesión. Por favor, inténtalo de nuevo.', { position: 'top-right' });
-    });
+        toast.success('Sesión cerrada correctamente.', { position: 'top-right' });
+      })
+      .catch((error) => {
+        console.error('Logout failed:', error);
+        toast.error('Error al cerrar sesión. Por favor, inténtalo de nuevo.', { position: 'top-right' });
+      });
 
   }
   return (
@@ -44,13 +45,16 @@ const HeaderSection2 = ({ session }) => {
                     className="fa-regular fa-envelope-open"
                     style={{ paddingRight: 5 }}
                   ></i>
-                 wms-cakes@gmail.com
+                  wms-cakes@gmail.com
                 </Link>
               </span>
             </div>
 
             <div className="col-md-4 col-6 col-xxs-12">
-              <h6>Administración - ( {APIUtil.getUserName()} )</h6>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <h6 style={{ margin: 0 }}>Administración</h6>
+                <UserRoleDisplay showFullInfo={true} />
+              </div>
             </div>
 
             {session && (
@@ -77,15 +81,15 @@ const HeaderSection2 = ({ session }) => {
                 </Link>
               </div>
             </div>
-            
+
             <div className="col-6 header-nav-container d-lg-block d-none">
-            {
-              session ? (
-                <HeaderAdminNav position={"justify-content-center"} />
-              ) : (
-               <h5 className="fz-footer-widget__title"></h5>
-              )
-            }
+              {
+                session ? (
+                  <HeaderAdminNav position={"justify-content-center"} />
+                ) : (
+                  <h5 className="fz-footer-widget__title"></h5>
+                )
+              }
             </div>
 
           </div>

@@ -41,6 +41,8 @@ import ShopProducts from "./pages/Products/shopProducts.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import Role from "./pages/admin/Role.jsx";
 import User from "./pages/admin/User.jsx";
+import RoleDemo from "./pages/admin/RoleDemo.jsx";
+import RoleDocumentation from "./pages/docs/RoleDocumentation.jsx";
 import { DiscountProvider } from "./context/DiscountContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { ProductProvider } from "./context/ProductContext.jsx";
@@ -105,6 +107,8 @@ function App() {
               <Route path="/sales" element={<Sales />} />
               <Route path="/role" element={<Role />} />
               <Route path="/user" element={<User />} />
+              <Route path="/role-demo" element={<RoleDemo />} />
+              <Route path="/role-docs" element={<RoleDocumentation />} />
               <Route path="/inventory" element={<Inventory />} />
               <Route path="/movement" element={<Movement />} />
               <Route path="/cakes" element={<Cakes />} />
