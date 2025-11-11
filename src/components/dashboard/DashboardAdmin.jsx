@@ -1,6 +1,9 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useDashboardData, useSystemAlerts } from '../../hooks/useDashboardData';
+import { LoadingCard, ErrorCard, StatCard, AlertCard, StatsGrid, LastUpdated } from './DashboardComponents';
+import { KPISummary } from './DashboardDetailStats';
 import UserRoleDisplay from '../user/UserRoleDisplaySimple';
 
 /**
@@ -9,6 +12,10 @@ import UserRoleDisplay from '../user/UserRoleDisplaySimple';
 const DashboardAdmin = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Hooks para datos del dashboard
+  const { data: adminData, loading: dataLoading, error: dataError, lastUpdated, refresh } = useDashboardData('admin', true);
+  const { alerts, loading: alertsLoading, error: alertsError, refresh: refreshAlerts } = useSystemAlerts(true);
 
   // Funciones de navegación
   const navigateTo = (path) => {
@@ -36,33 +43,55 @@ const DashboardAdmin = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
         {/* Estadísticas del Sistema */}
-        <div style={{
-          background: 'white',
-          padding: '1.5rem',
-          borderRadius: '12px',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-          border: '3px solid #667eea'
-        }}>
-          <h3>📈 Estadísticas del Sistema</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-              <h4 style={{ margin: 0, color: '#667eea' }}>Q 245,800</h4>
-              <p style={{ margin: '0.5rem 0 0 0' }}>Ventas Totales</p>
-            </div>
-            <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-              <h4 style={{ margin: 0, color: '#667eea' }}>1,247</h4>
-              <p style={{ margin: '0.5rem 0 0 0' }}>Órdenes</p>
-            </div>
-            <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-              <h4 style={{ margin: 0, color: '#667eea' }}>89</h4>
-              <p style={{ margin: '0.5rem 0 0 0' }}>Usuarios</p>
-            </div>
-            <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-              <h4 style={{ margin: 0, color: '#667eea' }}>456</h4>
-              <p style={{ margin: '0.5rem 0 0 0' }}>Productos</p>
-            </div>
+        {dataLoading ? (
+          <LoadingCard title="Cargando estadísticas del sistema..." />
+        ) : dataError ? (
+          <ErrorCard
+            title="Error al cargar estadísticas"
+            message={dataError}
+            onRetry={refresh}
+          />
+        ) : (
+          <div style={{
+            background: 'white',
+            padding: '1.5rem',
+            borderRadius: '12px',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+            border: '3px solid #667eea'
+          }}>
+            <h3>📈 Estadísticas del Sistema</h3>
+            <StatsGrid columns={2}>
+              <StatCard
+                title="Ventas Totales"
+                value={adminData?.sales?.totalVentas || 0}
+                color="#667eea"
+                icon="💰"
+                format="currency"
+              />
+              <StatCard
+                title="Órdenes"
+                value={adminData?.sales?.totalOrdenes || 0}
+                color="#667eea"
+                icon="📋"
+                format="number"
+              />
+              <StatCard
+                title="Clientes"
+                value={adminData?.clients?.totalClientes || 0}
+                color="#667eea"
+                icon="👥"
+                format="number"
+              />
+              <StatCard
+                title="Productos"
+                value={adminData?.inventory?.totalProductos || 0}
+                color="#667eea"
+                icon="📦"
+                format="number"
+              />
+            </StatsGrid>
           </div>
-        </div>
+        )}
 
         {/* Administración del Sistema */}
         <div style={{
@@ -318,28 +347,17 @@ const DashboardAdmin = () => {
         </div>
 
         {/* Alertas del Sistema */}
-        <div style={{
-          background: 'white',
-          padding: '1.5rem',
-          borderRadius: '12px',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-          border: '3px solid #ff6b6b',
-          gridColumn: 'span 2'
-        }}>
-          <h3>🚨 Alertas del Sistema</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <div style={{ padding: '0.75rem', background: '#fff5f5', border: '1px solid #fed7d7', borderRadius: '8px' }}>
-              ⚠️ Stock bajo en 12 productos
-            </div>
-            <div style={{ padding: '0.75rem', background: '#f0fff4', border: '1px solid #9ae6b4', borderRadius: '8px' }}>
-              ✅ Sistema funcionando correctamente
-            </div>
-            <div style={{ padding: '0.75rem', background: '#fffbf0', border: '1px solid #faf089', borderRadius: '8px' }}>
-              📊 3 reportes pendientes de revisión
-            </div>
-          </div>
+        <div style={{ gridColumn: 'span 2' }}>
+          <AlertCard
+            alerts={alerts}
+            loading={alertsLoading}
+            onRefresh={refreshAlerts}
+          />
         </div>
       </div>
+
+      {/* Indicador de última actualización */}
+      <LastUpdated timestamp={lastUpdated} onRefresh={refresh} />
     </div>
   );
 };

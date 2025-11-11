@@ -20,6 +20,7 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
     } = useAuth();
 
     const navigate = useNavigate();
+    const [isHovered, setIsHovered] = React.useState(false);
 
     // Función para navegar al dashboard
     const handleClick = () => {
@@ -33,152 +34,115 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
 
     // Obtener icono según el rol
     const getRoleIcon = () => {
-        if (isAdmin()) return <FaCrown className="role-icon admin" title="Administrador" />;
-        if (isVendedor()) return <FaUserTie className="role-icon vendedor" title="Vendedor" />;
-        if (isGerenteMercadeo()) return <FaChartLine className="role-icon gerente" title="Gerente de Mercadeo" />;
-        return <FaUser className="role-icon default" title="Usuario" />;
+        if (isAdmin()) return <FaCrown title="Administrador" />;
+        if (isVendedor()) return <FaUserTie title="Vendedor" />;
+        if (isGerenteMercadeo()) return <FaChartLine title="Gerente de Mercadeo" />;
+        return <FaUser title="Usuario" />;
     };
 
-    // Obtener clase CSS según el rol
-    const getRoleClass = () => {
-        if (isAdmin()) return 'admin';
-        if (isVendedor()) return 'vendedor';
-        if (isGerenteMercadeo()) return 'gerente';
-        return 'default';
+
+
+    // Obtener color del icono según el rol
+    const getRoleIconColor = () => {
+        if (isAdmin()) return '#ff6b35';
+        if (isVendedor()) return '#4ecdc4';
+        if (isGerenteMercadeo()) return '#45b7d1';
+        return '#666';
+    };
+
+    const containerStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.25rem',
+        padding: '0.5rem 0.75rem',
+        borderRadius: '8px',
+        transition: 'all 0.3s ease',
+        border: '1px solid transparent',
+        cursor: 'pointer',
+        backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+        borderColor: isHovered ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+        transform: isHovered ? 'translateY(-1px)' : 'translateY(0)',
+        boxShadow: isHovered ? '0 2px 8px rgba(0, 0, 0, 0.15)' : 'none'
+    };
+
+    const inlineInfoStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.25rem',
+        fontSize: '0.9rem'
+    };
+
+    const usernameStyle = {
+        fontWeight: 600,
+        color: isHovered ? '#fff' : '#e3e2e2ff',
+        transition: 'color 0.3s ease'
+    };
+
+    const separatorStyle = {
+        color: isHovered ? '#ccc' : '#666',
+        transition: 'color 0.3s ease'
+    };
+
+    const roleNameStyle = {
+        fontWeight: 500,
+        color: isHovered ? '#ddd' : '#bbb',
+        textTransform: 'capitalize',
+        transition: 'color 0.3s ease'
+    };
+
+    const iconWrapperStyle = {
+        display: 'inline-flex',
+        alignItems: 'center',
+        marginLeft: '0.25rem'
+    };
+
+    const compactInfoStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.3rem'
+    };
+
+    const usernameCompactStyle = {
+        fontWeight: 600,
+        fontSize: '0.85rem',
+        color: '#777'
+    };
+
+    const roleIconStyle = {
+        fontSize: '1rem',
+        transition: 'transform 0.2s ease',
+        verticalAlign: 'middle',
+        color: getRoleIconColor()
     };
 
     return (
         <div
-            className={`user-role-display ${getRoleClass()} ${className}`}
+            style={containerStyle}
             onClick={handleClick}
-            style={{ cursor: 'pointer' }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             title="Ir al Dashboard"
+            className={className}
         >
             {showFullInfo ? (
-                <span className="user-info-inline">
-                    <span className="username">{username}</span>
-                    <span className="separator"> - </span>
-                    <span className="role-name">{userRoleDisplay || userRole}</span>
-                    <span className="icon-wrapper">{getRoleIcon()}</span>
+                <span style={inlineInfoStyle}>
+                    <span style={usernameStyle}>{username}</span>
+                    <span style={separatorStyle}> - </span>
+                    <span style={roleNameStyle}>{userRoleDisplay || userRole}</span>
+                    <span style={iconWrapperStyle}>
+                        <div style={roleIconStyle}>
+                            {getRoleIcon()}
+                        </div>
+                    </span>
                 </span>
             ) : (
-                <div className="user-info-compact">
-                    {getRoleIcon()}
-                    <span className="username-compact">{username}</span>
+                <div style={compactInfoStyle}>
+                    <div style={roleIconStyle}>
+                        {getRoleIcon()}
+                    </div>
+                    <span style={usernameCompactStyle}>{username}</span>
                 </div>
             )}
-
-            <style jsx>{`
-                .user-role-display {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.25rem;
-                    padding: 0.5rem 0.75rem;
-                    border-radius: 8px;
-                    transition: all 0.3s ease;
-                    border: 1px solid transparent;
-                }
-
-                .user-role-display:hover {
-                    background-color: rgba(255, 255, 255, 0.1);
-                    border-color: rgba(255, 255, 255, 0.2);
-                    transform: translateY(-1px);
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-                }
-
-                .user-info-inline {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.25rem;
-                    font-size: 0.9rem;
-                }
-
-                .username {
-                    font-weight: 600;
-                    color: #e3e2e2ff;
-                    transition: color 0.3s ease;
-                }
-
-                .separator {
-                    color: #666;
-                    transition: color 0.3s ease;
-                }
-
-                .role-name {
-                    font-weight: 500;
-                    color: #bbb;
-                    text-transform: capitalize;
-                    transition: color 0.3s ease;
-                }
-
-                .user-role-display:hover .username {
-                    color: #fff;
-                }
-
-                .user-role-display:hover .separator {
-                    color: #ccc;
-                }
-
-                .user-role-display:hover .role-name {
-                    color: #ddd;
-                }
-
-                .icon-wrapper {
-                    display: inline-flex;
-                    align-items: center;
-                    margin-left: 0.25rem;
-                }
-
-                .user-info-compact {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.3rem;
-                }
-
-                .username-compact {
-                    font-weight: 600;
-                    font-size: 0.85rem;
-                    color: #777;
-                }
-
-                .role-icon {
-                    font-size: 1rem;
-                    transition: transform 0.2s ease;
-                    vertical-align: middle;
-                }
-
-                .role-icon:hover {
-                    transform: scale(1.1);
-                }
-
-                /* Colores por rol */
-                .user-role-display.admin .role-icon.admin {
-                    color: #ff6b35;
-                }
-
-                .user-role-display.vendedor .role-icon.vendedor {
-                    color: #4ecdc4;
-                }
-
-                .user-role-display.gerente .role-icon.gerente {
-                    color: #45b7d1;
-                }
-
-                .user-role-display.default .role-icon.default {
-                    color: #666;
-                }
-
-                /* Responsive */
-                @media (max-width: 768px) {
-                    .user-info-inline {
-                        font-size: 0.8rem;
-                    }
-                    
-                    .role-icon {
-                        font-size: 0.9rem;
-                    }
-                }
-            `}</style>
         </div>
     );
 };

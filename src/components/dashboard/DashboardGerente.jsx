@@ -1,6 +1,9 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useDashboardData } from '../../hooks/useDashboardData';
+import { LoadingCard, ErrorCard, StatCard, StatsGrid, LastUpdated } from './DashboardComponents';
+import { KPISummary } from './DashboardDetailStats';
 import UserRoleDisplay from '../user/UserRoleDisplaySimple';
 
 /**
@@ -9,6 +12,9 @@ import UserRoleDisplay from '../user/UserRoleDisplaySimple';
 const DashboardGerente = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    // Hook para datos CRM
+    const { data: gerenteData, loading, error, lastUpdated, refresh } = useDashboardData('gerente', true);
 
     // Funciones de navegación
     const navigateTo = (path) => {
@@ -36,33 +42,55 @@ const DashboardGerente = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                 {/* Métricas de CRM */}
-                <div style={{
-                    background: 'white',
-                    padding: '1.5rem',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-                    border: '3px solid #f093fb'
-                }}>
-                    <h3>📈 Métricas de CRM</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                        <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                            <h4 style={{ margin: 0, color: '#f093fb' }}>2,350</h4>
-                            <p style={{ margin: '0.5rem 0 0 0' }}>Clientes Activos</p>
-                        </div>
-                        <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                            <h4 style={{ margin: 0, color: '#f093fb' }}>12,450</h4>
-                            <p style={{ margin: '0.5rem 0 0 0' }}>Nuevos Leads</p>
-                        </div>
-                        <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                            <h4 style={{ margin: 0, color: '#f093fb' }}>23%</h4>
-                            <p style={{ margin: '0.5rem 0 0 0' }}>Conversión</p>
-                        </div>
-                        <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                            <h4 style={{ margin: 0, color: '#f093fb' }}>85%</h4>
-                            <p style={{ margin: '0.5rem 0 0 0' }}>Satisfacción</p>
-                        </div>
+                {loading ? (
+                    <LoadingCard title="Cargando métricas CRM..." />
+                ) : error ? (
+                    <ErrorCard
+                        title="Error al cargar métricas CRM"
+                        message={error}
+                        onRetry={refresh}
+                    />
+                ) : (
+                    <div style={{
+                        background: 'white',
+                        padding: '1.5rem',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                        border: '3px solid #f093fb'
+                    }}>
+                        <h3>📈 Métricas de CRM</h3>
+                        <StatsGrid columns={2}>
+                            <StatCard
+                                title="Clientes Activos"
+                                value={gerenteData?.clientesActivos || 0}
+                                color="#f093fb"
+                                icon="👥"
+                                format="number"
+                            />
+                            <StatCard
+                                title="Nuevos Leads"
+                                value={gerenteData?.nuevosLeads || 0}
+                                color="#f093fb"
+                                icon="🎯"
+                                format="number"
+                            />
+                            <StatCard
+                                title="Conversión"
+                                value={gerenteData?.tasaConversion || 0}
+                                color="#f093fb"
+                                icon="📊"
+                                format="percentage"
+                            />
+                            <StatCard
+                                title="Satisfacción"
+                                value={gerenteData?.satisfaccion || 0}
+                                color="#f093fb"
+                                icon="⭐"
+                                format="percentage"
+                            />
+                        </StatsGrid>
                     </div>
-                </div>
+                )}
 
                 {/* Herramientas de CRM */}
                 <div style={{
@@ -293,58 +321,204 @@ const DashboardGerente = () => {
                 </div>
 
                 {/* Campañas CRM Activas */}
-                <div style={{
-                    background: 'white',
-                    padding: '1.5rem',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-                    border: '3px solid #10b981'
-                }}>
-                    <h3>🎯 Campañas CRM Activas</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                        <div style={{ padding: '0.75rem', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '8px' }}>
-                            � Retención de Clientes - 85% completada
+                {loading ? (
+                    <LoadingCard title="Cargando campañas activas..." />
+                ) : error ? (
+                    <ErrorCard
+                        title="Error al cargar campañas"
+                        message="No se pudieron cargar las campañas activas"
+                        onRetry={refresh}
+                    />
+                ) : (
+                    <div style={{
+                        background: 'white',
+                        padding: '1.5rem',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                        border: '3px solid #10b981'
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                            <h3 style={{ margin: 0 }}>🎯 Campañas CRM Activas</h3>
+                            <span style={{
+                                fontSize: '0.9rem',
+                                color: '#666',
+                                background: '#f8f9fa',
+                                padding: '0.25rem 0.5rem',
+                                borderRadius: '4px'
+                            }}>
+                                Total: {gerenteData?.totalCampanas || 0}
+                            </span>
                         </div>
-                        <div style={{ padding: '0.75rem', background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '8px' }}>
-                            📧 Email Marketing - En progreso
-                        </div>
-                        <div style={{ padding: '0.75rem', background: '#dbeafe', border: '1px solid #93c5fd', borderRadius: '8px' }}>
-                            🎯 Segmentación de Leads - Planificación
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            {gerenteData?.campanasActivas && gerenteData.campanasActivas.length > 0 ? (
+                                gerenteData.campanasActivas.map((campaign, index) => {
+                                    const getStatusColor = (status) => {
+                                        switch (status?.toLowerCase()) {
+                                            case 'activa': return { bg: '#ecfdf5', border: '#a7f3d0', text: '#065f46' };
+                                            case 'completada': return { bg: '#dbeafe', border: '#93c5fd', text: '#1e40af' };
+                                            case 'pausada': return { bg: '#fef3c7', border: '#fcd34d', text: '#92400e' };
+                                            default: return { bg: '#f3f4f6', border: '#d1d5db', text: '#374151' };
+                                        }
+                                    };
+
+                                    const statusColors = getStatusColor(campaign.status);
+                                    const progress = campaign.progress || 0;
+
+                                    return (
+                                        <div
+                                            key={campaign.id || index}
+                                            style={{
+                                                padding: '0.75rem',
+                                                background: statusColors.bg,
+                                                border: `1px solid ${statusColors.border}`,
+                                                borderRadius: '8px',
+                                                color: statusColors.text
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <div>
+                                                    <strong>{campaign.name || 'Campaña sin nombre'}</strong>
+                                                    <div style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                                                        {campaign.type && `${campaign.type} • `}
+                                                        {progress}% completada
+                                                    </div>
+                                                </div>
+                                                <div style={{ textAlign: 'right', fontSize: '0.8rem' }}>
+                                                    {campaign.conversionRate > 0 && (
+                                                        <div>📈 {campaign.conversionRate}%</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {/* Barra de progreso */}
+                                            <div style={{
+                                                width: '100%',
+                                                height: '4px',
+                                                background: '#e5e7eb',
+                                                borderRadius: '2px',
+                                                marginTop: '0.5rem',
+                                                overflow: 'hidden'
+                                            }}>
+                                                <div style={{
+                                                    width: `${progress}%`,
+                                                    height: '100%',
+                                                    background: progress >= 80 ? '#10b981' : progress >= 50 ? '#f59e0b' : '#ef4444',
+                                                    transition: 'width 0.3s ease'
+                                                }}></div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div style={{
+                                    padding: '1rem',
+                                    background: '#f9fafb',
+                                    border: '1px solid #e5e7eb',
+                                    borderRadius: '8px',
+                                    textAlign: 'center',
+                                    color: '#6b7280'
+                                }}>
+                                    📝 No hay campañas activas en este momento
+                                </div>
+                            )}
                         </div>
                     </div>
-                </div>
+                )}
 
                 {/* Objetivos CRM del Mes */}
-                <div style={{
-                    background: 'white',
-                    padding: '1.5rem',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-                    border: '3px solid #8b5cf6'
-                }}>
-                    <h3>🎯 Objetivos CRM del Mes</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span>Nuevos clientes +200</span>
-                            <span style={{ padding: '0.25rem 0.5rem', background: '#10b981', color: 'white', borderRadius: '4px', fontSize: '0.8rem' }}>
-                                75%
-                            </span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span>Leads calificados 500</span>
-                            <span style={{ padding: '0.25rem 0.5rem', background: '#f59e0b', color: 'white', borderRadius: '4px', fontSize: '0.8rem' }}>
-                                60%
-                            </span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span>Satisfacción 90%</span>
-                            <span style={{ padding: '0.25rem 0.5rem', background: '#ef4444', color: 'white', borderRadius: '4px', fontSize: '0.8rem' }}>
-                                85%
-                            </span>
+                {loading ? (
+                    <LoadingCard title="Cargando objetivos del mes..." />
+                ) : error ? (
+                    <ErrorCard
+                        title="Error al cargar objetivos"
+                        message="No se pudieron cargar los objetivos del mes"
+                        onRetry={refresh}
+                    />
+                ) : (
+                    <div style={{
+                        background: 'white',
+                        padding: '1.5rem',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                        border: '3px solid #8b5cf6'
+                    }}>
+                        <h3>🎯 Objetivos CRM del Mes</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            {gerenteData?.objetivosMes && gerenteData.objetivosMes.length > 0 ? (
+                                gerenteData.objetivosMes.map((objetivo, index) => {
+                                    const getProgressColor = (progreso) => {
+                                        if (progreso >= 80) return '#10b981'; // Verde
+                                        if (progreso >= 60) return '#f59e0b'; // Amarillo
+                                        if (progreso >= 40) return '#fb923c'; // Naranja
+                                        return '#ef4444'; // Rojo
+                                    };
+
+                                    const progressColor = getProgressColor(objetivo.progreso);
+
+                                    return (
+                                        <div
+                                            key={objetivo.id || index}
+                                            style={{
+                                                border: '1px solid #e5e7eb',
+                                                borderRadius: '8px',
+                                                padding: '0.75rem',
+                                                background: '#fafafa'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                                <span style={{ fontWeight: '500' }}>
+                                                    {objetivo.titulo}
+                                                </span>
+                                                <span style={{
+                                                    padding: '0.25rem 0.5rem',
+                                                    background: progressColor,
+                                                    color: 'white',
+                                                    borderRadius: '4px',
+                                                    fontSize: '0.8rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {objetivo.progreso}%
+                                                </span>
+                                            </div>
+                                            <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                                                Actual: <strong>{objetivo.actual.toLocaleString()}</strong> / Objetivo: <strong>{objetivo.objetivo.toLocaleString()}</strong>
+                                            </div>
+                                            {/* Barra de progreso */}
+                                            <div style={{
+                                                width: '100%',
+                                                height: '6px',
+                                                background: '#e5e7eb',
+                                                borderRadius: '3px',
+                                                overflow: 'hidden'
+                                            }}>
+                                                <div style={{
+                                                    width: `${Math.min(objetivo.progreso, 100)}%`,
+                                                    height: '100%',
+                                                    background: progressColor,
+                                                    transition: 'width 0.3s ease'
+                                                }}></div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div style={{
+                                    padding: '1rem',
+                                    background: '#f9fafb',
+                                    border: '1px solid #e5e7eb',
+                                    borderRadius: '8px',
+                                    textAlign: 'center',
+                                    color: '#6b7280'
+                                }}>
+                                    🎯 No hay objetivos definidos para este mes
+                                </div>
+                            )}
                         </div>
                     </div>
-                </div>
+                )}
             </div>
+
+            {/* Indicador de última actualización */}
+            <LastUpdated timestamp={lastUpdated} onRefresh={refresh} />
         </div>
     );
 };

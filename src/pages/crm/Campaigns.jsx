@@ -27,13 +27,22 @@ export default function Campaigns() {
   });
 
   // Estados para segmentación
+  const [showSegmentationModal, setShowSegmentationModal] = useState(false);
+  const [filteredSegments, setFilteredSegments] = useState([]);
+  const [segmentationStatus, setSegmentationStatus] = useState(null);
   const [segmentedClients, setSegmentedClients] = useState([]);
   const [segmentationLoading, setSegmentationLoading] = useState(false);
-  const [selectedClients, setSelectedClients] = useState([]);
 
   // Estados para analytics
   const [campaignAnalytics, setCampaignAnalytics] = useState(null);
   const [overviewStats, setOverviewStats] = useState(null);
+
+  // Estados para gestión de campaña
+  const [isEditing, setIsEditing] = useState(false);
+  const [campaignClients, setCampaignClients] = useState([]);
+  const [availableClients, setAvailableClients] = useState([]);
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -108,6 +117,190 @@ export default function Campaigns() {
     } catch (error) {
       console.error('Error analyzing campaign:', error);
       alert('Error al analizar la campaña');
+    }
+  };
+
+  // Función para activar campaña
+  const handleActivateCampaign = async (campaign) => {
+    if (confirm(`¿Deseas activar la campaña "${campaign.name}"?`)) {
+      try {
+        setActionLoading(true);
+        await CampaignsService.update(campaign.idCampaign, { status: 'Activa' });
+        alert('Campaña activada exitosamente');
+        loadCampaigns();
+      } catch (error) {
+        console.error('Error activating campaign:', error);
+        alert('Error al activar la campaña');
+      } finally {
+        setActionLoading(false);
+      }
+    }
+  };
+
+  // Función para pausar campaña
+  const handlePauseCampaign = async (campaign) => {
+    if (confirm(`¿Deseas pausar la campaña "${campaign.name}"?`)) {
+      try {
+        setActionLoading(true);
+        await CampaignsService.update(campaign.idCampaign, { status: 'Pausada' });
+        alert('Campaña pausada exitosamente');
+        loadCampaigns();
+      } catch (error) {
+        console.error('Error pausing campaign:', error);
+        alert('Error al pausar la campaña');
+      } finally {
+        setActionLoading(false);
+      }
+    }
+  };
+
+  // Función para completar campaña
+  const handleCompleteCampaign = async (campaign) => {
+    if (confirm(`¿Deseas marcar como completada la campaña "${campaign.name}"?`)) {
+      try {
+        setActionLoading(true);
+        await CampaignsService.update(campaign.idCampaign, { status: 'Completada' });
+        alert('Campaña marcada como completada');
+        loadCampaigns();
+      } catch (error) {
+        console.error('Error completing campaign:', error);
+        alert('Error al completar la campaña');
+      } finally {
+        setActionLoading(false);
+      }
+    }
+  };
+
+  // Función para desactivar campaña
+  const handleDeactivateCampaign = async (campaign) => {
+    if (confirm(`¿Deseas desactivar permanentemente la campaña "${campaign.name}"? Esta acción no se puede deshacer.`)) {
+      try {
+        setActionLoading(true);
+        await CampaignsService.deactivate(campaign.idCampaign);
+        alert('Campaña desactivada exitosamente');
+        loadCampaigns();
+      } catch (error) {
+        console.error('Error deactivating campaign:', error);
+        alert('Error al desactivar la campaña');
+      } finally {
+        setActionLoading(false);
+      }
+    }
+  };
+
+  // Función para editar campaña
+  const handleEditCampaign = (campaign) => {
+    setCampaignForm({
+      name: campaign.name || '',
+      description: campaign.description || '',
+      startDate: campaign.startDate ? campaign.startDate.substring(0, 16) : '',
+      endDate: campaign.endDate ? campaign.endDate.substring(0, 16) : '',
+      budget: campaign.budget || '',
+      type: campaign.type || 'Promocional',
+      objective: campaign.objective || '',
+      channel: campaign.channel || 'Email',
+      status: campaign.status || 'Planificada',
+      conversionRate: campaign.conversionRate || 0
+    });
+    setSelectedCampaign(campaign);
+    setIsEditing(true);
+    setActiveView('create');
+  };
+
+  // Función para actualizar campaña
+  const handleUpdateCampaign = async (e) => {
+    e.preventDefault();
+    try {
+      setActionLoading(true);
+      await CampaignsService.update(selectedCampaign.idCampaign, campaignForm);
+      alert('Campaña actualizada exitosamente');
+      setCampaignForm({
+        name: '',
+        description: '',
+        startDate: '',
+        endDate: '',
+        budget: '',
+        type: 'Promocional',
+        objective: '',
+        channel: 'Email',
+        status: 'Planificada',
+        conversionRate: 0
+      });
+      setIsEditing(false);
+      setSelectedCampaign(null);
+      setActiveView('list');
+      loadCampaigns();
+    } catch (error) {
+      console.error('Error updating campaign:', error);
+      alert('Error al actualizar la campaña');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Función para gestionar clientes de campaña
+  const handleManageClients = async (campaign) => {
+    try {
+      setActionLoading(true);
+      const clients = await CampaignsService.getCampaignClients(campaign.idCampaign);
+      const allClients = await ClientsService.list();
+
+      setCampaignClients(clients);
+      setAvailableClients(allClients);
+      setSelectedCampaign(campaign);
+      setShowClientModal(true);
+    } catch (error) {
+      console.error('Error loading campaign clients:', error);
+      alert('Error al cargar los clientes de la campaña');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Función para agregar cliente a campaña
+  const handleAddClientToCampaign = async (clientId) => {
+    try {
+      await CampaignsService.addClientToCampaign(selectedCampaign.idCampaign, clientId);
+      alert('Cliente agregado exitosamente a la campaña');
+      // Recargar clientes de la campaña
+      const updatedClients = await CampaignsService.getCampaignClients(selectedCampaign.idCampaign);
+      setCampaignClients(updatedClients);
+    } catch (error) {
+      console.error('Error adding client to campaign:', error);
+      alert('Error al agregar cliente a la campaña');
+    }
+  };
+
+  // Función para remover cliente de campaña
+  const handleRemoveClientFromCampaign = async (campaignClientId) => {
+    if (confirm('¿Deseas remover este cliente de la campaña?')) {
+      try {
+        await CampaignsService.removeClientFromCampaign(campaignClientId);
+        alert('Cliente removido exitosamente de la campaña');
+        // Recargar clientes de la campaña
+        const updatedClients = await CampaignsService.getCampaignClients(selectedCampaign.idCampaign);
+        setCampaignClients(updatedClients);
+      } catch (error) {
+        console.error('Error removing client from campaign:', error);
+        alert('Error al remover cliente de la campaña');
+      }
+    }
+  };
+
+  // Función para actualizar estado de cliente en campaña
+  const handleUpdateClientStatus = async (campaignClientId, newStatus, comments) => {
+    try {
+      await CampaignsService.updateCampaignClient(campaignClientId, {
+        result: newStatus,
+        comments: comments
+      });
+      alert('Estado del cliente actualizado exitosamente');
+      // Recargar clientes de la campaña
+      const updatedClients = await CampaignsService.getCampaignClients(selectedCampaign.idCampaign);
+      setCampaignClients(updatedClients);
+    } catch (error) {
+      console.error('Error updating client status:', error);
+      alert('Error al actualizar el estado del cliente');
     }
   };
 
@@ -270,21 +463,165 @@ export default function Campaigns() {
                       {conversionRate}%
                     </td>
                     <td style={{ padding: '1rem' }}>
-                      <button
-                        onClick={() => handleAnalyzeCampaign(campaign)}
-                        style={{
-                          padding: '0.5rem 1rem',
-                          background: '#3b82f6',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '6px',
-                          cursor: 'pointer',
-                          fontSize: '0.875rem',
-                          marginRight: '0.5rem'
-                        }}
-                      >
-                        📊 Analizar
-                      </button>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {/* Botón Analizar */}
+                        <button
+                          onClick={() => handleAnalyzeCampaign(campaign)}
+                          disabled={actionLoading}
+                          style={{
+                            padding: '0.5rem 1rem',
+                            background: '#3b82f6',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: actionLoading ? 'not-allowed' : 'pointer',
+                            fontSize: '0.875rem',
+                            opacity: actionLoading ? 0.6 : 1
+                          }}
+                          title="Analizar campaña"
+                        >
+                          📊
+                        </button>
+
+                        {/* Botón Editar */}
+                        <button
+                          onClick={() => handleEditCampaign(campaign)}
+                          disabled={actionLoading}
+                          style={{
+                            padding: '0.5rem 1rem',
+                            background: '#f59e0b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: actionLoading ? 'not-allowed' : 'pointer',
+                            fontSize: '0.875rem',
+                            opacity: actionLoading ? 0.6 : 1
+                          }}
+                          title="Editar campaña"
+                        >
+                          ✏️
+                        </button>
+
+                        {/* Botones condicionales según estado */}
+                        {campaign.status === 'Planificada' && (
+                          <button
+                            onClick={() => handleActivateCampaign(campaign)}
+                            disabled={actionLoading}
+                            style={{
+                              padding: '0.5rem 1rem',
+                              background: '#10b981',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              cursor: actionLoading ? 'not-allowed' : 'pointer',
+                              fontSize: '0.875rem',
+                              opacity: actionLoading ? 0.6 : 1
+                            }}
+                            title="Activar campaña"
+                          >
+                            ▶️
+                          </button>
+                        )}
+
+                        {campaign.status === 'Activa' && (
+                          <>
+                            <button
+                              onClick={() => handlePauseCampaign(campaign)}
+                              disabled={actionLoading}
+                              style={{
+                                padding: '0.5rem 1rem',
+                                background: '#f59e0b',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: actionLoading ? 'not-allowed' : 'pointer',
+                                fontSize: '0.875rem',
+                                opacity: actionLoading ? 0.6 : 1
+                              }}
+                              title="Pausar campaña"
+                            >
+                              ⏸️
+                            </button>
+                            <button
+                              onClick={() => handleCompleteCampaign(campaign)}
+                              disabled={actionLoading}
+                              style={{
+                                padding: '0.5rem 1rem',
+                                background: '#8b5cf6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: actionLoading ? 'not-allowed' : 'pointer',
+                                fontSize: '0.875rem',
+                                opacity: actionLoading ? 0.6 : 1
+                              }}
+                              title="Completar campaña"
+                            >
+                              ✅
+                            </button>
+                          </>
+                        )}
+
+                        {campaign.status === 'Pausada' && (
+                          <button
+                            onClick={() => handleActivateCampaign(campaign)}
+                            disabled={actionLoading}
+                            style={{
+                              padding: '0.5rem 1rem',
+                              background: '#10b981',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              cursor: actionLoading ? 'not-allowed' : 'pointer',
+                              fontSize: '0.875rem',
+                              opacity: actionLoading ? 0.6 : 1
+                            }}
+                            title="Reactivar campaña"
+                          >
+                            ▶️
+                          </button>
+                        )}
+
+                        {/* Botón Gestionar Clientes */}
+                        <button
+                          onClick={() => handleManageClients(campaign)}
+                          disabled={actionLoading}
+                          style={{
+                            padding: '0.5rem 1rem',
+                            background: '#6366f1',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: actionLoading ? 'not-allowed' : 'pointer',
+                            fontSize: '0.875rem',
+                            opacity: actionLoading ? 0.6 : 1
+                          }}
+                          title="Gestionar clientes"
+                        >
+                          �
+                        </button>
+
+                        {/* Botón Desactivar (solo para campañas completadas o pausadas) */}
+                        {(campaign.status === 'Completada' || campaign.status === 'Pausada') && (
+                          <button
+                            onClick={() => handleDeactivateCampaign(campaign)}
+                            disabled={actionLoading}
+                            style={{
+                              padding: '0.5rem 1rem',
+                              background: '#dc2626',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              cursor: actionLoading ? 'not-allowed' : 'pointer',
+                              fontSize: '0.875rem',
+                              opacity: actionLoading ? 0.6 : 1
+                            }}
+                            title="Desactivar campaña"
+                          >
+                            🗑️
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
@@ -308,9 +645,28 @@ export default function Campaigns() {
         background: '#f8f9fa',
         borderRadius: '8px'
       }}>
-        <h2 style={{ margin: 0, color: '#333' }}>➕ Nueva Campaña</h2>
+        <h2 style={{ margin: 0, color: '#333' }}>
+          {isEditing ? '✏️ Editar Campaña' : '➕ Nueva Campaña'}
+        </h2>
         <button
-          onClick={() => setActiveView('list')}
+          onClick={() => {
+            setActiveView('list');
+            setIsEditing(false);
+            setSelectedCampaign(null);
+            // Reset form
+            setCampaignForm({
+              name: '',
+              description: '',
+              startDate: '',
+              endDate: '',
+              budget: '',
+              type: 'Promocional',
+              objective: '',
+              channel: 'Email',
+              status: 'Planificada',
+              conversionRate: 0
+            });
+          }}
           style={{
             padding: '0.75rem 1.5rem',
             background: '#6b7280',
@@ -325,7 +681,7 @@ export default function Campaigns() {
       </div>
 
       <div style={{ background: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-        <form onSubmit={handleCreateCampaign}>
+        <form onSubmit={isEditing ? handleUpdateCampaign : handleCreateCampaign}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
@@ -516,7 +872,7 @@ export default function Campaigns() {
                 fontWeight: '600'
               }}
             >
-              ✅ Crear Campaña
+              {isEditing ? '💾 Actualizar Campaña' : '✅ Crear Campaña'}
             </button>
           </div>
         </form>
@@ -832,6 +1188,181 @@ export default function Campaigns() {
     </div>
   );
 
+  // Modal para gestionar clientes de campaña
+  const renderClientModal = () => {
+    if (!showClientModal) return null;
+
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0,0,0,0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000
+      }}>
+        <div style={{
+          background: 'white',
+          borderRadius: '12px',
+          width: '90%',
+          maxWidth: '800px',
+          maxHeight: '80vh',
+          overflow: 'auto',
+          padding: '2rem'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '2rem'
+          }}>
+            <h2 style={{ margin: 0, color: '#333' }}>
+              👥 Gestionar Clientes - {selectedCampaign?.name}
+            </h2>
+            <button
+              onClick={() => setShowClientModal(false)}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '1.5rem',
+                cursor: 'pointer',
+                padding: '0.5rem'
+              }}
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Clientes actuales en la campaña */}
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ color: '#333', marginBottom: '1rem' }}>Clientes en la Campaña</h3>
+            {campaignClients.length > 0 ? (
+              <div style={{
+                background: '#f8f9fa',
+                borderRadius: '8px',
+                overflow: 'hidden'
+              }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#667eea', color: 'white' }}>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Cliente</th>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Estado</th>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Fecha</th>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {campaignClients.map(cc => (
+                      <tr key={cc.idCampaignClient} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        <td style={{ padding: '1rem' }}>
+                          {cc.Client?.firstName} {cc.Client?.lastName}
+                        </td>
+                        <td style={{ padding: '1rem' }}>
+                          <select
+                            value={cc.result || 'Pendiente'}
+                            onChange={(e) => {
+                              const comments = prompt('Comentarios (opcional):');
+                              handleUpdateClientStatus(cc.idCampaignClient, e.target.value, comments);
+                            }}
+                            style={{
+                              padding: '0.5rem',
+                              border: '1px solid #ddd',
+                              borderRadius: '4px'
+                            }}
+                          >
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Contactado">Contactado</option>
+                            <option value="Interesado">Interesado</option>
+                            <option value="Convertido">Convertido</option>
+                            <option value="No Interesado">No Interesado</option>
+                          </select>
+                        </td>
+                        <td style={{ padding: '1rem' }}>
+                          {cc.contactDate ? new Date(cc.contactDate).toLocaleDateString() : 'Sin contactar'}
+                        </td>
+                        <td style={{ padding: '1rem' }}>
+                          <button
+                            onClick={() => handleRemoveClientFromCampaign(cc.idCampaignClient)}
+                            style={{
+                              padding: '0.5rem 1rem',
+                              background: '#dc2626',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '0.875rem'
+                            }}
+                          >
+                            Remover
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p style={{ color: '#666', fontStyle: 'italic' }}>No hay clientes asignados a esta campaña</p>
+            )}
+          </div>
+
+          {/* Agregar nuevos clientes */}
+          <div>
+            <h3 style={{ color: '#333', marginBottom: '1rem' }}>Agregar Clientes</h3>
+            <div style={{
+              maxHeight: '300px',
+              overflow: 'auto',
+              background: '#f8f9fa',
+              borderRadius: '8px',
+              padding: '1rem'
+            }}>
+              {availableClients
+                .filter(client => !campaignClients.some(cc => cc.idClient === client.idClient))
+                .map(client => (
+                  <div key={client.idClient} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '0.75rem',
+                    background: 'white',
+                    borderRadius: '6px',
+                    marginBottom: '0.5rem',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                  }}>
+                    <div>
+                      <strong>{client.firstName} {client.lastName}</strong>
+                      <br />
+                      <span style={{ color: '#666', fontSize: '0.875rem' }}>
+                        {client.email} | {client.phone}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleAddClientToCampaign(client.idClient)}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: '#10b981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem'
+                      }}
+                    >
+                      Agregar
+                    </button>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
       {renderNavigation()}
@@ -840,6 +1371,8 @@ export default function Campaigns() {
       {activeView === 'create' && renderCreateCampaign()}
       {activeView === 'segmentation' && renderSegmentation()}
       {activeView === 'analytics' && renderAnalytics()}
+
+      {renderClientModal()}
     </div>
   );
 }

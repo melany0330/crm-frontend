@@ -1,6 +1,9 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useDashboardData } from '../../hooks/useDashboardData';
+import { LoadingCard, ErrorCard, StatCard, StatsGrid, LastUpdated } from './DashboardComponents';
+import { KPISummary } from './DashboardDetailStats';
 import UserRoleDisplay from '../user/UserRoleDisplaySimple';
 
 /**
@@ -9,6 +12,9 @@ import UserRoleDisplay from '../user/UserRoleDisplaySimple';
 const DashboardVendedor = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    // Hook para datos de ventas
+    const { data: vendedorData, loading, error, lastUpdated, refresh } = useDashboardData('vendedor', true);
 
     // Funciones de navegación
     const navigateTo = (path) => {
@@ -36,33 +42,55 @@ const DashboardVendedor = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                 {/* Estadísticas de Ventas */}
-                <div style={{
-                    background: 'white',
-                    padding: '1.5rem',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-                    border: '3px solid #4ecdc4'
-                }}>
-                    <h3>📊 Estadísticas de Ventas</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                        <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                            <h4 style={{ margin: 0, color: '#4ecdc4' }}>Q 12,500</h4>
-                            <p style={{ margin: '0.5rem 0 0 0' }}>Ventas Hoy</p>
-                        </div>
-                        <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                            <h4 style={{ margin: 0, color: '#4ecdc4' }}>Q 89,200</h4>
-                            <p style={{ margin: '0.5rem 0 0 0' }}>Ventas Mes</p>
-                        </div>
-                        <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                            <h4 style={{ margin: 0, color: '#4ecdc4' }}>24</h4>
-                            <p style={{ margin: '0.5rem 0 0 0' }}>Órdenes Hoy</p>
-                        </div>
-                        <div style={{ textAlign: 'center', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
-                            <h4 style={{ margin: 0, color: '#4ecdc4' }}>156</h4>
-                            <p style={{ margin: '0.5rem 0 0 0' }}>Clientes</p>
-                        </div>
+                {loading ? (
+                    <LoadingCard title="Cargando estadísticas de ventas..." />
+                ) : error ? (
+                    <ErrorCard
+                        title="Error al cargar estadísticas"
+                        message={error}
+                        onRetry={refresh}
+                    />
+                ) : (
+                    <div style={{
+                        background: 'white',
+                        padding: '1.5rem',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                        border: '3px solid #4ecdc4'
+                    }}>
+                        <h3>📊 Estadísticas de Ventas</h3>
+                        <StatsGrid columns={2}>
+                            <StatCard
+                                title="Ventas Hoy"
+                                value={vendedorData?.ventasHoy || 0}
+                                color="#4ecdc4"
+                                icon="📅"
+                                format="currency"
+                            />
+                            <StatCard
+                                title="Ventas Mes"
+                                value={vendedorData?.ventasMes || 0}
+                                color="#4ecdc4"
+                                icon="📈"
+                                format="currency"
+                            />
+                            <StatCard
+                                title="Órdenes Hoy"
+                                value={vendedorData?.ordenesHoy || 0}
+                                color="#4ecdc4"
+                                icon="🛒"
+                                format="number"
+                            />
+                            <StatCard
+                                title="Clientes"
+                                value={vendedorData?.clientesCount || 0}
+                                color="#4ecdc4"
+                                icon="👥"
+                                format="number"
+                            />
+                        </StatsGrid>
                     </div>
-                </div>
+                )}
 
                 {/* Acciones Rápidas */}
                 <div style={{
@@ -401,6 +429,9 @@ const DashboardVendedor = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Indicador de última actualización */}
+            <LastUpdated timestamp={lastUpdated} onRefresh={refresh} />
         </div>
     );
 };
