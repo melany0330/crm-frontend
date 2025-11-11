@@ -39,8 +39,12 @@ import Sales from "./pages/sale/Sale.jsx";
 import Cakes from "./pages/Products/Cake.jsx";
 import ShopProducts from "./pages/Products/shopProducts.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
+import DashboardMain from "./components/dashboard/DashboardMain.jsx";
 import Role from "./pages/admin/Role.jsx";
 import User from "./pages/admin/User.jsx";
+import RoleDemo from "./pages/admin/RoleDemo.jsx";
+import RoleDocumentation from "./pages/docs/RoleDocumentation.jsx";
+import RoleTestDemo from "./components/demo/RoleTestDemo.jsx";
 import { DiscountProvider } from "./context/DiscountContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { ProductProvider } from "./context/ProductContext.jsx";
@@ -70,7 +74,16 @@ function App() {
             <Routes>
               {/* Público / e-commerce */}
               <Route path="/" element={<Cakes />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+
+              {/* Dashboard protegido - acceso solo con login */}
+              <Route
+                path="/dashboard"
+                element={
+                  <RequireRoles roles={["ADMINISTRADOR", "VENDEDOR", "GERENTE_MERCADEO"]}>
+                    <DashboardMain />
+                  </RequireRoles>
+                }
+              />
 
               <Route path="/jewellery-shop" element={<JewelleryShop />} />
               <Route path="/cake-shop" element={<CakeShop />} />
@@ -96,28 +109,135 @@ function App() {
               <Route path="/blogDetails" element={<BlogDetails />} />
               <Route path="/contact" element={<Contact />} />
 
-              {/* Módulos internos existentes */}
-              <Route path="/providers" element={<Providers />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/purchases" element={<Purchases />} />
-              <Route path="/reportPurchases" element={<PurchasesReport />} />
-              <Route path="/newPurchase" element={<NewPurchasePage />} />
+              {/* === RUTAS PARA VENDEDORES Y ADMINISTRADORES === */}
+              <Route
+                path="/clients"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <Clients />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/sales"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <Sales />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/products"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <Products />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/cakes"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <Cakes />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/shopProducts"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <ShopProducts />
+                  </RequireRoles>
+                }
+              />
+
+              {/* === RUTAS PARA VENDEDOR Y ADMINISTRADOR === */}
+              <Route
+                path="/providers"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <Providers />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/inventory"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <Inventory />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/movement"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <Movement />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/purchases"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <Purchases />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/reportPurchases"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <PurchasesReport />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/newPurchase"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <NewPurchasePage />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/discounts"
+                element={
+                  <RequireRoles roles={["VENDEDOR", "ADMINISTRADOR"]}>
+                    <Discounts />
+                  </RequireRoles>
+                }
+              />
+
+              {/* === RUTAS SOLO PARA ADMINISTRADORES === */}
+              <Route
+                path="/role"
+                element={
+                  <RequireRoles roles={["ADMINISTRADOR"]}>
+                    <Role />
+                  </RequireRoles>
+                }
+              />
+              <Route
+                path="/user"
+                element={
+                  <RequireRoles roles={["ADMINISTRADOR"]}>
+                    <User />
+                  </RequireRoles>
+                }
+              />
+
+              {/* === RUTAS PÚBLICAS (sin restricción) === */}
               <Route path="/aboutUs" element={<AboutUs />} />
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/discounts" element={<Discounts />} />
-              <Route path="/sales" element={<Sales />} />
-              <Route path="/role" element={<Role />} />
-              <Route path="/user" element={<User />} />
-              <Route path="/inventory" element={<Inventory />} />
-              <Route path="/movement" element={<Movement />} />
-              <Route path="/cakes" element={<Cakes />} />
-              <Route path="/shopProducts" element={<ShopProducts />} />
+              <Route path="/role-demo" element={<RoleDemo />} />
+              <Route path="/role-test" element={<RoleTestDemo />} />
+              <Route path="/role-docs" element={<RoleDocumentation />} />
 
               {/* === CRM: pantalla y layout propios === */}
               <Route
                 path="/crm"
                 element={
-                  <RequireRoles roles={["ADMINISTRADOR", "VENDEDOR", "GERENTE_MERCADEO"]}>
+                  <RequireRoles roles={["ADMINISTRADOR", "GERENTE_MERCADEO"]}>
                     <CRMLayout />
                   </RequireRoles>
                 }
