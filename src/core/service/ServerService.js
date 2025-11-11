@@ -86,14 +86,21 @@ export function getAuthUserId() {
 
 // ===== Servicio HTTP =====
 class ServerService {
-  authSend(url, method = "GET", data = null, customHeaders = {}) {
+  authSend(url, method = "GET", data = null, customHeaders = {}, config = {}) {
     const token = getAuthToken();
-    return this.send(url, method, token, data, customHeaders);
+    return this.send(url, method, token, data, customHeaders, config);
   }
 
-  send(url, method = "GET", token = null, data = null, customHeaders = {}) {
+  send(
+    url,
+    method = "GET",
+    token = null,
+    data = null,
+    customHeaders = {},
+    config = {}
+  ) {
     const headers = ServerService.#createHeaders(token, customHeaders);
-    return axios({ method, url: `${BASE_URL}${url}`, data, headers });
+    return axios({ method, url: `${BASE_URL}${url}`, data, headers, ...config });
   }
 
   static #createHeaders(token, customHeaders) {

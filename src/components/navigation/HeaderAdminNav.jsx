@@ -58,14 +58,30 @@ const HeaderAdminNav = ({ position, downArrow }) => {
           </ul>
         </li>
 
-        {/* CRM como pantalla aparte (sin submenu) */}
+        {/* CRM como pantalla aparte + pestaña consistente para reportes */}
         {canSeeCRM && (
-          <li className="fz-nav-item">
-            <Link to="/crm" className="fz-nav-link">
-              <span>CRM</span>
-              <i className="fa-regular fa-arrow-up-right-from-square" style={{ marginLeft: 6 }}></i>
-            </Link>
-          </li>
+          <>
+            <li className="fz-nav-item">
+              <Link to="/crm" className="fz-nav-link">
+                <span>CRM</span>
+                <i className="fa-regular fa-arrow-up-right-from-square" style={{ marginLeft: 6 }}></i>
+              </Link>
+            </li>
+
+            <li className="fz-dropdown fz-nav-item">
+              <a role="button" className="fz-nav-link">
+                <span>Reportes</span>{" "}
+                <i className={downArrow ? "fa-solid fa-angle-down" : "fa-regular fa-plus"}></i>
+              </a>
+              <ul className="fz-submenu">
+                <li>
+                  <Link to="/crm/reports" className="fz-nav-link fz-submenu-nav-link">
+                    Ventas y desempeno
+                  </Link>
+                </li>
+              </ul>
+            </li>
+          </>
         )}
 
         {/* Administración */}
