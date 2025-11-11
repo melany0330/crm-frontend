@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { FaUser, FaCrown, FaUserTie, FaChartLine } from 'react-icons/fa';
 
 /**
@@ -17,6 +18,13 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
         isVendedor,
         isGerenteMercadeo
     } = useAuth();
+
+    const navigate = useNavigate();
+
+    // Función para navegar al dashboard
+    const handleClick = () => {
+        navigate('/dashboard');
+    };
 
     // Si está cargando o no está autenticado, no mostrar nada
     if (loading || !isAuthenticated || !user) {
@@ -40,7 +48,12 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
     };
 
     return (
-        <div className={`user-role-display ${getRoleClass()} ${className}`}>
+        <div
+            className={`user-role-display ${getRoleClass()} ${className}`}
+            onClick={handleClick}
+            style={{ cursor: 'pointer' }}
+            title="Ir al Dashboard"
+        >
             {showFullInfo ? (
                 <span className="user-info-inline">
                     <span className="username">{username}</span>
@@ -60,6 +73,17 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
                     display: flex;
                     align-items: center;
                     gap: 0.25rem;
+                    padding: 0.5rem 0.75rem;
+                    border-radius: 8px;
+                    transition: all 0.3s ease;
+                    border: 1px solid transparent;
+                }
+
+                .user-role-display:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                    border-color: rgba(255, 255, 255, 0.2);
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
                 }
 
                 .user-info-inline {
@@ -72,16 +96,31 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
                 .username {
                     font-weight: 600;
                     color: #e3e2e2ff;
+                    transition: color 0.3s ease;
                 }
 
                 .separator {
                     color: #666;
+                    transition: color 0.3s ease;
                 }
 
                 .role-name {
                     font-weight: 500;
                     color: #bbb;
                     text-transform: capitalize;
+                    transition: color 0.3s ease;
+                }
+
+                .user-role-display:hover .username {
+                    color: #fff;
+                }
+
+                .user-role-display:hover .separator {
+                    color: #ccc;
+                }
+
+                .user-role-display:hover .role-name {
+                    color: #ddd;
                 }
 
                 .icon-wrapper {

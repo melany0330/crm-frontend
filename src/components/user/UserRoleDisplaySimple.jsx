@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { FaUser, FaCrown, FaUserTie, FaChartLine } from 'react-icons/fa';
 
 /**
@@ -17,6 +18,13 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
         isVendedor,
         isGerenteMercadeo
     } = useAuth();
+
+    const navigate = useNavigate();
+
+    // Función para navegar al dashboard
+    const handleClick = () => {
+        navigate('/dashboard');
+    };
 
     // Si está cargando o no está autenticado, no mostrar nada
     if (loading || !isAuthenticated || !user) {
@@ -49,7 +57,7 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
         backdropFilter: 'blur(10px)',
         border: `1px solid ${getBorderColor()}`,
         transition: 'all 0.3s ease',
-        cursor: 'default'
+        cursor: 'pointer'
     };
 
     const userInfoStyle = {
@@ -88,6 +96,8 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
         <div
             style={baseStyle}
             className={className}
+            onClick={handleClick}
+            title="Ir al Dashboard"
             onMouseEnter={(e) => {
                 e.target.style.background = 'rgba(255, 255, 255, 0.15)';
                 e.target.style.transform = 'translateY(-1px)';
