@@ -8,7 +8,8 @@ class Token {
         this.refreshToken = refreshToken;
         this.userName = userName;
         this.userId = userId;
-        this.roleId = roleId;
+        // Asegurar que roleId sea siempre un número o null
+        this.roleId = roleId ? parseInt(roleId, 10) : null;
         this.roleName = roleName;
 
         // Si no se proporcionaron los datos del usuario/rol, intentar extraerlos del token
@@ -33,7 +34,8 @@ class Token {
 
                 this.userId = this.userId || decoded.userId;
                 this.userName = this.userName || decoded.username;
-                this.roleId = this.roleId || decoded.roleId;
+                // Asegurar que roleId sea siempre un número
+                this.roleId = this.roleId || (decoded.roleId ? parseInt(decoded.roleId, 10) : null);
             }
         } catch (error) {
             console.warn('⚠️ [Token] No se pudo extraer información del token:', error);
@@ -108,27 +110,14 @@ class Token {
         const roleName = localStorage.getItem('roleName');
         const userId = localStorage.getItem('userId');
 
-        console.log('📦 [Token] Cargando desde localStorage:', {
-            hasToken: !!token,
-            hasRefreshToken: !!refreshToken,
-            userName,
-            userId,
-            roleId,
-            roleName
-        });
-
         if (!token || !refreshToken) {
             console.warn('⚠️ [Token] No se encontró token o refreshToken en localStorage');
             return null;
         }
 
-        const tokenInstance = new Token(token, refreshToken, userName, userId, roleId, roleName);
-        console.log('✅ [Token] Token creado desde localStorage:', {
-            userId: tokenInstance.getUserId(),
-            userName: tokenInstance.getUserName(),
-            roleId: tokenInstance.getRoleId(),
-            roleName: tokenInstance.getRoleName()
-        });
+        // Convertir roleId a número si existe
+        const roleIdNumber = roleId ? parseInt(roleId, 10) : null;
+        const tokenInstance = new Token(token, refreshToken, userName, userId, roleIdNumber, roleName);
 
         return tokenInstance;
     }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import UserRoleDisplay from '../user/UserRoleDisplaySimple';
 
 /**
@@ -7,6 +8,12 @@ import UserRoleDisplay from '../user/UserRoleDisplaySimple';
  */
 const DashboardVendedor = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
+
+    // Funciones de navegación
+    const navigateTo = (path) => {
+        navigate(path);
+    };
 
     return (
         <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif' }}>
@@ -21,8 +28,8 @@ const DashboardVendedor = () => {
                 alignItems: 'center'
             }}>
                 <div>
-                    <h1>💰 Dashboard de Ventas</h1>
-                    <p>Panel de control para gestión de ventas y clientes</p>
+                    <h1>💰 Dashboard de Vendedor</h1>
+                    <p>Panel de control completo para ventas y operaciones</p>
                 </div>
                 <UserRoleDisplay showFullInfo={true} />
             </div>
@@ -67,38 +74,90 @@ const DashboardVendedor = () => {
                 }}>
                     <h3>⚡ Acciones Rápidas</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                        <button style={{
-                            padding: '0.75rem',
-                            background: '#4ecdc4',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: '600'
-                        }}>
+                        <button
+                            onClick={() => navigateTo('/sales')}
+                            style={{
+                                padding: '0.75rem',
+                                background: '#4ecdc4',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                transition: 'background 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.background = '#38b2ac'}
+                            onMouseOut={(e) => e.target.style.background = '#4ecdc4'}
+                        >
                             🛒 Nueva Venta
                         </button>
-                        <button style={{
-                            padding: '0.75rem',
-                            background: '#44a08d',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: '600'
-                        }}>
+                        <button
+                            onClick={() => navigateTo('/clients')}
+                            style={{
+                                padding: '0.75rem',
+                                background: '#44a08d',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                transition: 'background 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.background = '#38a169'}
+                            onMouseOut={(e) => e.target.style.background = '#44a08d'}
+                        >
                             👥 Gestionar Clientes
                         </button>
-                        <button style={{
-                            padding: '0.75rem',
-                            background: '#36877d',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: '600'
-                        }}>
+                        <button
+                            onClick={() => navigateTo('/products')}
+                            style={{
+                                padding: '0.75rem',
+                                background: '#36877d',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                transition: 'background 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.background = '#2f855a'}
+                            onMouseOut={(e) => e.target.style.background = '#36877d'}
+                        >
                             📦 Ver Productos
+                        </button>
+                        <button
+                            onClick={() => navigateTo('/providers')}
+                            style={{
+                                padding: '0.75rem',
+                                background: '#20b2aa',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                transition: 'background 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.background = '#1a9999'}
+                            onMouseOut={(e) => e.target.style.background = '#20b2aa'}
+                        >
+                            🏢 Proveedores
+                        </button>
+                        <button
+                            onClick={() => navigateTo('/inventory')}
+                            style={{
+                                padding: '0.75rem',
+                                background: '#2e8b57',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                transition: 'background 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.background = '#226644'}
+                            onMouseOut={(e) => e.target.style.background = '#2e8b57'}
+                        >
+                            📋 Ver Inventario
                         </button>
                     </div>
                 </div>
@@ -112,25 +171,230 @@ const DashboardVendedor = () => {
                     border: '3px solid #2c7c73',
                     gridColumn: 'span 2'
                 }}>
-                    <h3>🏪 Módulos Disponibles para Vendedores</h3>
+                    <h3>🏪 Módulos Disponibles</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-                        <div style={{ padding: '1rem', background: '#e8f8f6', borderRadius: '8px', textAlign: 'center' }}>
+                        <div
+                            onClick={() => navigateTo('/sales')}
+                            style={{
+                                padding: '1rem',
+                                background: '#e8f8f6',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: '2px solid transparent'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = '#d1fae5';
+                                e.target.style.borderColor = '#4ecdc4';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = '#e8f8f6';
+                                e.target.style.borderColor = 'transparent';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
                             <h4 style={{ margin: '0 0 0.5rem 0' }}>💰 Ventas</h4>
                             <p style={{ margin: 0, fontSize: '0.9rem' }}>Procesar y gestionar ventas</p>
                         </div>
-                        <div style={{ padding: '1rem', background: '#e8f8f6', borderRadius: '8px', textAlign: 'center' }}>
+                        <div
+                            onClick={() => navigateTo('/clients')}
+                            style={{
+                                padding: '1rem',
+                                background: '#e8f8f6',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: '2px solid transparent'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = '#d1fae5';
+                                e.target.style.borderColor = '#4ecdc4';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = '#e8f8f6';
+                                e.target.style.borderColor = 'transparent';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
                             <h4 style={{ margin: '0 0 0.5rem 0' }}>👥 Clientes</h4>
                             <p style={{ margin: 0, fontSize: '0.9rem' }}>Gestión de clientes</p>
                         </div>
-                        <div style={{ padding: '1rem', background: '#e8f8f6', borderRadius: '8px', textAlign: 'center' }}>
+                        <div
+                            onClick={() => navigateTo('/products')}
+                            style={{
+                                padding: '1rem',
+                                background: '#e8f8f6',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: '2px solid transparent'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = '#d1fae5';
+                                e.target.style.borderColor = '#4ecdc4';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = '#e8f8f6';
+                                e.target.style.borderColor = 'transparent';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
                             <h4 style={{ margin: '0 0 0.5rem 0' }}>📦 Productos</h4>
                             <p style={{ margin: 0, fontSize: '0.9rem' }}>Catálogo de productos</p>
                         </div>
-                        <div style={{ padding: '1rem', background: '#e8f8f6', borderRadius: '8px', textAlign: 'center' }}>
-                            <h4 style={{ margin: '0 0 0.5rem 0' }}>🍰 Pasteles</h4>
-                            <p style={{ margin: 0, fontSize: '0.9rem' }}>Gestión de pasteles</p>
+                        <div
+                            onClick={() => navigateTo('/providers')}
+                            style={{
+                                padding: '1rem',
+                                background: '#e8f8f6',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: '2px solid transparent'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = '#d1fae5';
+                                e.target.style.borderColor = '#4ecdc4';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = '#e8f8f6';
+                                e.target.style.borderColor = 'transparent';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
+                            <h4 style={{ margin: '0 0 0.5rem 0' }}>🏢 Proveedores</h4>
+                            <p style={{ margin: 0, fontSize: '0.9rem' }}>Gestión de proveedores</p>
                         </div>
-                        <div style={{ padding: '1rem', background: '#e8f8f6', borderRadius: '8px', textAlign: 'center' }}>
+                        <div
+                            onClick={() => navigateTo('/inventory')}
+                            style={{
+                                padding: '1rem',
+                                background: '#e8f8f6',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: '2px solid transparent'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = '#d1fae5';
+                                e.target.style.borderColor = '#4ecdc4';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = '#e8f8f6';
+                                e.target.style.borderColor = 'transparent';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
+                            <h4 style={{ margin: '0 0 0.5rem 0' }}>📋 Inventario</h4>
+                            <p style={{ margin: 0, fontSize: '0.9rem' }}>Control de stock</p>
+                        </div>
+                        <div
+                            onClick={() => navigateTo('/purchases')}
+                            style={{
+                                padding: '1rem',
+                                background: '#e8f8f6',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: '2px solid transparent'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = '#d1fae5';
+                                e.target.style.borderColor = '#4ecdc4';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = '#e8f8f6';
+                                e.target.style.borderColor = 'transparent';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
+                            <h4 style={{ margin: '0 0 0.5rem 0' }}>📥 Compras</h4>
+                            <p style={{ margin: 0, fontSize: '0.9rem' }}>Gestión de compras</p>
+                        </div>
+                        <div
+                            onClick={() => navigateTo('/movement')}
+                            style={{
+                                padding: '1rem',
+                                background: '#e8f8f6',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: '2px solid transparent'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = '#d1fae5';
+                                e.target.style.borderColor = '#4ecdc4';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = '#e8f8f6';
+                                e.target.style.borderColor = 'transparent';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
+                            <h4 style={{ margin: '0 0 0.5rem 0' }}>📊 Movimientos</h4>
+                            <p style={{ margin: 0, fontSize: '0.9rem' }}>Entradas y salidas</p>
+                        </div>
+                        <div
+                            onClick={() => navigateTo('/discount')}
+                            style={{
+                                padding: '1rem',
+                                background: '#e8f8f6',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: '2px solid transparent'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = '#d1fae5';
+                                e.target.style.borderColor = '#4ecdc4';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = '#e8f8f6';
+                                e.target.style.borderColor = 'transparent';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
+                            <h4 style={{ margin: '0 0 0.5rem 0' }}>🎯 Descuentos</h4>
+                            <p style={{ margin: 0, fontSize: '0.9rem' }}>Eventos y promociones</p>
+                        </div>
+                        <div
+                            onClick={() => navigateTo('/shop')}
+                            style={{
+                                padding: '1rem',
+                                background: '#e8f8f6',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: '2px solid transparent'
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.background = '#d1fae5';
+                                e.target.style.borderColor = '#4ecdc4';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.background = '#e8f8f6';
+                                e.target.style.borderColor = 'transparent';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
                             <h4 style={{ margin: '0 0 0.5rem 0' }}>🛒 Ecommerce</h4>
                             <p style={{ margin: 0, fontSize: '0.9rem' }}>Tienda online</p>
                         </div>

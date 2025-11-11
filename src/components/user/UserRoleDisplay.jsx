@@ -42,13 +42,12 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
     return (
         <div className={`user-role-display ${getRoleClass()} ${className}`}>
             {showFullInfo ? (
-                <>
-                    <div className="user-info">
-                        <span className="username">{username}</span>
-                        <span className="role-name">{userRoleDisplay || userRole}</span>
-                    </div>
-                    {getRoleIcon()}
-                </>
+                <span className="user-info-inline">
+                    <span className="username">{username}</span>
+                    <span className="separator"> - </span>
+                    <span className="role-name">{userRoleDisplay || userRole}</span>
+                    <span className="icon-wrapper">{getRoleIcon()}</span>
+                </span>
             ) : (
                 <div className="user-info-compact">
                     {getRoleIcon()}
@@ -60,39 +59,35 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
                 .user-role-display {
                     display: flex;
                     align-items: center;
-                    gap: 0.5rem;
-                    padding: 0.5rem;
-                    border-radius: 8px;
-                    background: rgba(255, 255, 255, 0.1);
-                    backdrop-filter: blur(10px);
-                    border: 1px solid rgba(255, 255, 255, 0.2);
-                    transition: all 0.3s ease;
+                    gap: 0.25rem;
                 }
 
-                .user-role-display:hover {
-                    background: rgba(255, 255, 255, 0.15);
-                    transform: translateY(-1px);
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                }
-
-                .user-info {
+                .user-info-inline {
                     display: flex;
-                    flex-direction: column;
-                    align-items: flex-end;
+                    align-items: center;
+                    gap: 0.25rem;
+                    font-size: 0.9rem;
                 }
 
                 .username {
                     font-weight: 600;
-                    font-size: 0.9rem;
-                    color: #333;
-                    margin-bottom: 2px;
+                    color: #e3e2e2ff;
+                }
+
+                .separator {
+                    color: #666;
                 }
 
                 .role-name {
-                    font-size: 0.75rem;
-                    color: #666;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
+                    font-weight: 500;
+                    color: #bbb;
+                    text-transform: capitalize;
+                }
+
+                .icon-wrapper {
+                    display: inline-flex;
+                    align-items: center;
+                    margin-left: 0.25rem;
                 }
 
                 .user-info-compact {
@@ -104,12 +99,13 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
                 .username-compact {
                     font-weight: 600;
                     font-size: 0.85rem;
-                    color: #333;
+                    color: #777;
                 }
 
                 .role-icon {
-                    font-size: 1.2rem;
+                    font-size: 1rem;
                     transition: transform 0.2s ease;
+                    vertical-align: middle;
                 }
 
                 .role-icon:hover {
@@ -121,24 +117,12 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
                     color: #ff6b35;
                 }
 
-                .user-role-display.admin {
-                    border-color: rgba(255, 107, 53, 0.3);
-                }
-
                 .user-role-display.vendedor .role-icon.vendedor {
                     color: #4ecdc4;
                 }
 
-                .user-role-display.vendedor {
-                    border-color: rgba(78, 205, 196, 0.3);
-                }
-
                 .user-role-display.gerente .role-icon.gerente {
                     color: #45b7d1;
-                }
-
-                .user-role-display.gerente {
-                    border-color: rgba(69, 183, 209, 0.3);
                 }
 
                 .user-role-display.default .role-icon.default {
@@ -147,16 +131,12 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
 
                 /* Responsive */
                 @media (max-width: 768px) {
-                    .user-role-display {
-                        padding: 0.25rem;
-                    }
-                    
-                    .user-info {
-                        display: none;
+                    .user-info-inline {
+                        font-size: 0.8rem;
                     }
                     
                     .role-icon {
-                        font-size: 1rem;
+                        font-size: 0.9rem;
                     }
                 }
             `}</style>

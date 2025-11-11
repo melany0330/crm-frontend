@@ -52,7 +52,6 @@ const HeaderSection2 = ({ session }) => {
 
             <div className="col-md-4 col-6 col-xxs-12">
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <h6 style={{ margin: 0 }}>Administración</h6>
                 <UserRoleDisplay showFullInfo={true} />
               </div>
             </div>

@@ -28,7 +28,7 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
         if (isAdmin()) return <FaCrown style={{ color: '#ff6b35', fontSize: '1.2rem' }} title="Administrador" />;
         if (isVendedor()) return <FaUserTie style={{ color: '#4ecdc4', fontSize: '1.2rem' }} title="Vendedor" />;
         if (isGerenteMercadeo()) return <FaChartLine style={{ color: '#45b7d1', fontSize: '1.2rem' }} title="Gerente de Mercadeo" />;
-        return <FaUser style={{ color: '#666', fontSize: '1.2rem' }} title="Usuario" />;
+        return <FaUser style={{ color: '#fff', fontSize: '1.2rem' }} title="Usuario" />;
     };
 
     // Obtener color de borde según el rol
@@ -61,13 +61,13 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
     const usernameStyle = {
         fontWeight: 600,
         fontSize: '0.9rem',
-        color: '#333',
+        color: '#ffffffff',
         marginBottom: '2px'
     };
 
     const roleNameStyle = {
         fontSize: '0.75rem',
-        color: '#666',
+        color: '#d8d8d8ff',
         textTransform: 'uppercase',
         letterSpacing: '0.5px'
     };
@@ -81,7 +81,7 @@ const UserRoleDisplay = ({ showFullInfo = true, className = "" }) => {
     const usernameCompactStyle = {
         fontWeight: 600,
         fontSize: '0.85rem',
-        color: '#333'
+        color: '#ffffffff'
     };
 
     return (

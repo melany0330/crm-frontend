@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { hasRole } from '../../core/system/APIUtil';
 import DashboardAdmin from './DashboardAdmin';
 import DashboardVendedor from './DashboardVendedor';
 import DashboardGerente from './DashboardGerente';
 import UserRoleDisplay from '../user/UserRoleDisplaySimple';
+import Layout from '../layout/Layout';
+import BreadcrumbSection from '../breadcrumb/BreadcrumbSection';
 
 /**
  * Dashboard Principal que muestra contenido diferente según el rol del usuario
  */
 const DashboardMain = () => {
     const { user, isAuthenticated } = useAuth();
-
-    console.log('🏠 DashboardMain - Usuario autenticado:', isAuthenticated);
-    console.log('🏠 DashboardMain - Datos del usuario:', user);
+    const [selectedDashboard, setSelectedDashboard] = useState('default');
 
     // Si no está autenticado, mostrar mensaje
     if (!isAuthenticated || !user) {
@@ -32,28 +32,32 @@ const DashboardMain = () => {
 
     // Renderizar dashboard según el rol
     const renderDashboardByRole = () => {
-        console.log('🏠 DashboardMain - Evaluando roles del usuario...');
 
-        // ADMINISTRADOR (rol ID: 1)
+        // ADMINISTRADOR (rol ID: 1) - Puede ver todos los dashboards
         if (hasRole('ADMINISTRADOR')) {
-            console.log('✅ DashboardMain - Mostrando dashboard de Administrador');
+
+            // Si el administrador seleccionó una vista específica
+            if (selectedDashboard === 'vendedor') {
+                return <DashboardVendedor />;
+            } else if (selectedDashboard === 'gerente') {
+                return <DashboardGerente />;
+            }
+
+            // Por defecto, mostrar dashboard de admin
             return <DashboardAdmin />;
         }
 
         // VENDEDOR (rol ID: 2)
         if (hasRole('VENDEDOR')) {
-            console.log('✅ DashboardMain - Mostrando dashboard de Vendedor');
             return <DashboardVendedor />;
         }
 
         // GERENTE_MERCADEO (rol ID: 3)
         if (hasRole('GERENTE_MERCADEO')) {
-            console.log('✅ DashboardMain - Mostrando dashboard de Gerente de Mercadeo');
             return <DashboardGerente />;
         }
 
         // Si no tiene ningún rol reconocido
-        console.log('⚠️ DashboardMain - Rol no reconocido, mostrando dashboard genérico');
         return (
             <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif' }}>
                 <div style={{
@@ -100,10 +104,64 @@ const DashboardMain = () => {
         );
     };
 
+    // Renderizar selector de vista para administradores
+    const renderAdminViewSelector = () => {
+        if (!hasRole('ADMINISTRADOR')) return null;
+
+        return (
+            <div style={{
+                background: 'white',
+                padding: '1rem',
+                marginBottom: '1rem',
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1rem'
+            }}>
+                <span style={{ fontWeight: '600', color: '#667eea' }}>👑 Vista de Administrador:</span>
+                <select
+                    value={selectedDashboard}
+                    onChange={(e) => {
+                        console.log('🔄 Cambiando vista a:', e.target.value);
+                        setSelectedDashboard(e.target.value);
+                    }}
+                    style={{
+                        padding: '0.5rem',
+                        borderRadius: '4px',
+                        border: '2px solid #667eea',
+                        fontSize: '0.9rem'
+                    }}
+                >
+                    <option value="default">🏠 Dashboard Administrador</option>
+                    <option value="vendedor">💰 Vista de Vendedor</option>
+                    <option value="gerente">📊 Vista de Gerente Marketing</option>
+                </select>
+                <span style={{ fontSize: '0.8rem', color: '#666' }}>
+                    Los administradores pueden ver todas las vistas
+                </span>
+            </div>
+        );
+    };
+
+    // Función para obtener el título según el rol
+    const getBreadcrumbTitle = () => {
+        if (hasRole('ADMINISTRADOR')) {
+            if (selectedDashboard === 'vendedor') return 'Dashboard de Ventas';
+            if (selectedDashboard === 'gerente') return 'Dashboard de Marketing';
+            return 'Dashboard Administrativo';
+        }
+        if (hasRole('VENDEDOR')) return 'Dashboard de Ventas';
+        if (hasRole('GERENTE_MERCADEO')) return 'Dashboard de Marketing';
+        return 'Dashboard Principal';
+    };
+
     return (
-        <>
+        <Layout login={true}>
+            <BreadcrumbSection title={getBreadcrumbTitle()} current="Dashboard" />
+            {renderAdminViewSelector()}
             {renderDashboardByRole()}
-        </>
+        </Layout>
     );
 };
 

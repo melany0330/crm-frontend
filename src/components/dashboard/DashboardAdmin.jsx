@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import UserRoleDisplay from '../user/UserRoleDisplaySimple';
 
 /**
@@ -7,6 +8,12 @@ import UserRoleDisplay from '../user/UserRoleDisplaySimple';
  */
 const DashboardAdmin = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Funciones de navegación
+  const navigateTo = (path) => {
+    navigate(path);
+  };
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'Arial, sans-serif' }}>
@@ -67,37 +74,55 @@ const DashboardAdmin = () => {
         }}>
           <h3>⚙️ Administración</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <button style={{
-              padding: '0.75rem',
-              background: '#667eea',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}>
+            <button
+              onClick={() => navigateTo('/user')}
+              style={{
+                padding: '0.75rem',
+                background: '#667eea',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                transition: 'background 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.background = '#5a67d8'}
+              onMouseOut={(e) => e.target.style.background = '#667eea'}
+            >
               👥 Gestionar Usuarios
             </button>
-            <button style={{
-              padding: '0.75rem',
-              background: '#764ba2',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}>
+            <button
+              onClick={() => navigateTo('/role')}
+              style={{
+                padding: '0.75rem',
+                background: '#764ba2',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                transition: 'background 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.background = '#6b46c1'}
+              onMouseOut={(e) => e.target.style.background = '#764ba2'}
+            >
               🛡️ Gestionar Roles
             </button>
-            <button style={{
-              padding: '0.75rem',
-              background: '#5a4d7c',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}>
+            <button
+              onClick={() => navigateTo('/crm/reports')}
+              style={{
+                padding: '0.75rem',
+                background: '#5a4d7c',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                transition: 'background 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.background = '#4c1d95'}
+              onMouseOut={(e) => e.target.style.background = '#5a4d7c'}
+            >
               📊 Reportes Generales
             </button>
           </div>
@@ -114,35 +139,178 @@ const DashboardAdmin = () => {
         }}>
           <h3>🎯 Todos los Módulos del Sistema</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-            <div style={{ padding: '1rem', background: '#e8e6f7', borderRadius: '8px', textAlign: 'center' }}>
+            <div
+              onClick={() => navigateTo('/sales')}
+              style={{
+                padding: '1rem',
+                background: '#e8e6f7',
+                borderRadius: '8px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                border: '2px solid transparent'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#ddd6fe';
+                e.target.style.borderColor = '#667eea';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = '#e8e6f7';
+                e.target.style.borderColor = 'transparent';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
               <h4 style={{ margin: '0 0 0.5rem 0' }}>💰 Ventas</h4>
               <p style={{ margin: 0, fontSize: '0.9rem' }}>Completa gestión de ventas</p>
             </div>
-            <div style={{ padding: '1rem', background: '#e8e6f7', borderRadius: '8px', textAlign: 'center' }}>
+            <div
+              onClick={() => navigateTo('/clients')}
+              style={{
+                padding: '1rem',
+                background: '#e8e6f7',
+                borderRadius: '8px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                border: '2px solid transparent'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#ddd6fe';
+                e.target.style.borderColor = '#667eea';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = '#e8e6f7';
+                e.target.style.borderColor = 'transparent';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
               <h4 style={{ margin: '0 0 0.5rem 0' }}>👥 Clientes</h4>
               <p style={{ margin: 0, fontSize: '0.9rem' }}>Gestión de clientes</p>
             </div>
-            <div style={{ padding: '1rem', background: '#e8e6f7', borderRadius: '8px', textAlign: 'center' }}>
+            <div
+              onClick={() => navigateTo('/inventory')}
+              style={{
+                padding: '1rem',
+                background: '#e8e6f7',
+                borderRadius: '8px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                border: '2px solid transparent'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#ddd6fe';
+                e.target.style.borderColor = '#667eea';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = '#e8e6f7';
+                e.target.style.borderColor = 'transparent';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
               <h4 style={{ margin: '0 0 0.5rem 0' }}>📦 Inventario</h4>
               <p style={{ margin: 0, fontSize: '0.9rem' }}>Control de inventario</p>
             </div>
-            <div style={{ padding: '1rem', background: '#e8e6f7', borderRadius: '8px', textAlign: 'center' }}>
+            <div
+              onClick={() => navigateTo('/providers')}
+              style={{
+                padding: '1rem',
+                background: '#e8e6f7',
+                borderRadius: '8px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                border: '2px solid transparent'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#ddd6fe';
+                e.target.style.borderColor = '#667eea';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = '#e8e6f7';
+                e.target.style.borderColor = 'transparent';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
               <h4 style={{ margin: '0 0 0.5rem 0' }}>🏢 Proveedores</h4>
               <p style={{ margin: 0, fontSize: '0.9rem' }}>Gestión de proveedores</p>
             </div>
-            <div style={{ padding: '1rem', background: '#e8e6f7', borderRadius: '8px', textAlign: 'center' }}>
+            <div
+              onClick={() => navigateTo('/purchases')}
+              style={{
+                padding: '1rem',
+                background: '#e8e6f7',
+                borderRadius: '8px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                border: '2px solid transparent'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#ddd6fe';
+                e.target.style.borderColor = '#667eea';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = '#e8e6f7';
+                e.target.style.borderColor = 'transparent';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
               <h4 style={{ margin: '0 0 0.5rem 0' }}>🛒 Compras</h4>
               <p style={{ margin: 0, fontSize: '0.9rem' }}>Gestión de compras</p>
             </div>
-            <div style={{ padding: '1rem', background: '#e8e6f7', borderRadius: '8px', textAlign: 'center' }}>
-              <h4 style={{ margin: '0 0 0.5rem 0' }}>📊 Reportes</h4>
-              <p style={{ margin: 0, fontSize: '0.9rem' }}>Informes y análisis</p>
+            <div
+              onClick={() => navigateTo('/discounts')}
+              style={{
+                padding: '1rem',
+                background: '#e8e6f7',
+                borderRadius: '8px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                border: '2px solid transparent'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#ddd6fe';
+                e.target.style.borderColor = '#667eea';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = '#e8e6f7';
+                e.target.style.borderColor = 'transparent';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
+              <h4 style={{ margin: '0 0 0.5rem 0' }}>🎁 Descuentos</h4>
+              <p style={{ margin: 0, fontSize: '0.9rem' }}>Promociones y ofertas</p>
             </div>
-            <div style={{ padding: '1rem', background: '#e8e6f7', borderRadius: '8px', textAlign: 'center' }}>
-              <h4 style={{ margin: '0 0 0.5rem 0' }}>👑 Admin</h4>
-              <p style={{ margin: 0, fontSize: '0.9rem' }}>Administración del sistema</p>
-            </div>
-            <div style={{ padding: '1rem', background: '#e8e6f7', borderRadius: '8px', textAlign: 'center' }}>
+            <div
+              onClick={() => navigateTo('/shop')}
+              style={{
+                padding: '1rem',
+                background: '#e8e6f7',
+                borderRadius: '8px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                border: '2px solid transparent'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#ddd6fe';
+                e.target.style.borderColor = '#667eea';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = '#e8e6f7';
+                e.target.style.borderColor = 'transparent';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
               <h4 style={{ margin: '0 0 0.5rem 0' }}>🛍️ E-commerce</h4>
               <p style={{ margin: 0, fontSize: '0.9rem' }}>Todas las tiendas</p>
             </div>

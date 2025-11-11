@@ -92,26 +92,23 @@ class APIUtil {
      */
     static hasRole(role) {
         const userRoleId = this.getUserRoleId();
-        console.log(`🔍 APIUtil.hasRole - Verificando rol "${role}" para usuario con roleId: ${userRoleId}`);
 
         if (!userRoleId) {
-            console.log(`❌ APIUtil.hasRole - Usuario no tiene roleId`);
             return false;
         }
 
+        // Convertir userRoleId a número para comparaciones consistentes
+        const userRoleIdNumber = parseInt(userRoleId, 10);
+
         if (typeof role === 'string') {
             const roleInfo = getRoleByName(role);
-            console.log(`🔍 APIUtil.hasRole - RoleInfo para "${role}":`, roleInfo);
-            const hasRoleResult = roleInfo ? roleInfo.id === userRoleId : false;
-            console.log(`${hasRoleResult ? '✅' : '❌'} APIUtil.hasRole - Resultado: ${hasRoleResult}`);
+            const hasRoleResult = roleInfo ? roleInfo.id === userRoleIdNumber : false;
             return hasRoleResult;
         } else if (typeof role === 'number') {
-            const hasRoleResult = role === userRoleId;
-            console.log(`${hasRoleResult ? '✅' : '❌'} APIUtil.hasRole - Resultado numérico: ${hasRoleResult}`);
+            const hasRoleResult = role === userRoleIdNumber;
             return hasRoleResult;
         }
 
-        console.log(`❌ APIUtil.hasRole - Tipo de rol no válido:`, typeof role);
         return false;
     }
 
@@ -186,7 +183,9 @@ class APIUtil {
         }
 
         const userInfo = token.getUserInfo();
-        const roleInfo = this.getUserRole();
+
+        // Usar APIUtil en lugar de this para evitar problemas de contexto
+        const roleInfo = APIUtil.getUserRole();
 
         const currentUser = {
             id: token.getUserId(),
@@ -204,24 +203,24 @@ class APIUtil {
     }
 }
 
-// Exportaciones nombradas para facilitar el uso
-export const validateSession = APIUtil.validateSession;
-export const redirectIfNotAuthenticated = APIUtil.redirectIfNotAuthenticated;
-export const redirectIfAuthenticated = APIUtil.redirectIfAuthenticated;
-export const getAuthToken = APIUtil.getAuthToken;
-export const getRefreshToken = APIUtil.getRefreshToken;
-export const getUserName = APIUtil.getUserName;
-export const getUserId = APIUtil.getUserId;
-export const getUserRoleId = APIUtil.getUserRoleId;
-export const getUserRoleName = APIUtil.getUserRoleName;
-export const getUserRole = APIUtil.getUserRole;
-export const hasRole = APIUtil.hasRole;
-export const hasAnyRole = APIUtil.hasAnyRole;
-export const hasAllRoles = APIUtil.hasAllRoles;
-export const isAdmin = APIUtil.isAdmin;
-export const isVendedor = APIUtil.isVendedor;
-export const isGerenteMercadeo = APIUtil.isGerenteMercadeo;
-export const isTokenExpiringSoon = APIUtil.isTokenExpiringSoon;
-export const getCurrentUser = APIUtil.getCurrentUser;
+// Exportaciones nombradas para facilitar el uso - con binding correcto
+export const validateSession = APIUtil.validateSession.bind(APIUtil);
+export const redirectIfNotAuthenticated = APIUtil.redirectIfNotAuthenticated.bind(APIUtil);
+export const redirectIfAuthenticated = APIUtil.redirectIfAuthenticated.bind(APIUtil);
+export const getAuthToken = APIUtil.getAuthToken.bind(APIUtil);
+export const getRefreshToken = APIUtil.getRefreshToken.bind(APIUtil);
+export const getUserName = APIUtil.getUserName.bind(APIUtil);
+export const getUserId = APIUtil.getUserId.bind(APIUtil);
+export const getUserRoleId = APIUtil.getUserRoleId.bind(APIUtil);
+export const getUserRoleName = APIUtil.getUserRoleName.bind(APIUtil);
+export const getUserRole = APIUtil.getUserRole.bind(APIUtil);
+export const hasRole = APIUtil.hasRole.bind(APIUtil);
+export const hasAnyRole = APIUtil.hasAnyRole.bind(APIUtil);
+export const hasAllRoles = APIUtil.hasAllRoles.bind(APIUtil);
+export const isAdmin = APIUtil.isAdmin.bind(APIUtil);
+export const isVendedor = APIUtil.isVendedor.bind(APIUtil);
+export const isGerenteMercadeo = APIUtil.isGerenteMercadeo.bind(APIUtil);
+export const isTokenExpiringSoon = APIUtil.isTokenExpiringSoon.bind(APIUtil);
+export const getCurrentUser = APIUtil.getCurrentUser.bind(APIUtil);
 
 export default APIUtil;
