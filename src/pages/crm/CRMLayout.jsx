@@ -16,8 +16,11 @@ export default function CRMLayout() {
 
       <nav style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
         <NavLink to="/crm" end style={linkStyle}>Inicio</NavLink>
+        <NavLink to="/crm/quotes" style={linkStyle}>Cotizaciones</NavLink>
         <NavLink to="/crm/clients" style={linkStyle}>Clientes</NavLink>
         <NavLink to="/crm/opportunities" style={linkStyle}>Oportunidades</NavLink>
+        <NavLink to="/crm/offers" style={linkStyle}>Ofertas</NavLink>
+        <NavLink to="/crm/suggestions" style={linkStyle}>Sugerencias</NavLink>
         <NavLink to="/crm/activities" style={linkStyle}>Actividades</NavLink>
         <NavLink to="/crm/campaigns" style={linkStyle}>Campañas</NavLink>
         <NavLink to="/crm/reports" style={linkStyle}>Reportes</NavLink>

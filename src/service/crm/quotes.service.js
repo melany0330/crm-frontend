@@ -32,6 +32,26 @@ class QuotesService {
     return unwrap(res);
   }
 
+  async update(idQuote, dto) {
+    const res = await this.server.authSend(`/api/quotes/update/${idQuote}`, "PUT", dto);
+    return unwrap(res);
+  }
+
+  async updateStatus(idQuote, status) {
+    const payload = { status };
+    const res = await this.server.authSend(`/api/quotes/updateStatus/${idQuote}`, "PUT", payload);
+    return unwrap(res);
+  }
+
+  async deactivate(idQuote) {
+    const res = await this.server.authSend(`/api/quotes/deactivate/${idQuote}`, "PUT");
+    return unwrap(res);
+  }
+
+  async delete(idQuote) {
+    return this.deactivate(idQuote);
+  }
+
   // -------- DETALLE --------
   async #tryDetailEndpoints(idQuote) {
     const candidates = [

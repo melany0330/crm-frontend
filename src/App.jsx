@@ -54,6 +54,9 @@ import CRMLayout from "./pages/crm/CRMLayout.jsx";
 import CRMHome from "./pages/crm/CRMHome.jsx";
 import ClientsCRM from "./pages/crm/ClientsCRM.jsx";
 import Opportunities from "./pages/crm/Opportunities.jsx";
+import Quotes from "./pages/crm/quote/Quotes.jsx";
+import Offers from "./pages/crm/Offers.jsx";
+import Suggestions from "./pages/crm/Suggestions.jsx";
 import Activities from "./pages/crm/Activities.jsx";
 import Campaigns from "./pages/crm/Campaigns.jsx";
 import Reports from "./pages/crm/Reports.jsx";
@@ -120,8 +123,11 @@ function App() {
                 }
               >
                 <Route index element={<CRMHome />} />
+                <Route path="quotes" element={<Quotes />} />
                 <Route path="clients" element={<ClientsCRM />} />
                 <Route path="opportunities" element={<Opportunities />} />
+                <Route path="offers" element={<Offers />} />
+                <Route path="suggestions" element={<Suggestions />} />
                 <Route path="activities" element={<Activities />} />
                 <Route path="campaigns" element={<Campaigns />} />
                 <Route path="reports" element={<Reports />} />
