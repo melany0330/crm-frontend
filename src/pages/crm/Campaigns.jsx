@@ -364,7 +364,7 @@ export default function Campaigns() {
             fontWeight: '600'
           }}
         >
-          ➕ Nueva Campaña
+          Nueva Campaña
         </button>
       </div>
 
@@ -398,7 +398,7 @@ export default function Campaigns() {
       {/* Tabla de campañas */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <p>🔄 Cargando campañas...</p>
+          <p>Cargando campañas...</p>
         </div>
       ) : (
         <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
@@ -418,7 +418,7 @@ export default function Campaigns() {
               {campaigns.length === 0 ? (
                 <tr>
                   <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
-                    📭 No hay campañas registradas
+                    No hay campañas registradas
                   </td>
                 </tr>
               ) : campaigns.map((campaign) => {
@@ -455,8 +455,8 @@ export default function Campaigns() {
                     <td style={{ padding: '1rem', fontWeight: '600' }}>{formatCurrency(budget)}</td>
                     <td style={{ padding: '1rem' }}>
                       <div style={{ fontSize: '0.875rem' }}>
-                        <div>📅 {formatDate(startDate)}</div>
-                        <div>🏁 {formatDate(endDate)}</div>
+                        <div>{formatDate(startDate)}</div>
+                        <div>{formatDate(endDate)}</div>
                       </div>
                     </td>
                     <td style={{ padding: '1rem', fontWeight: '600', color: conversionRate > 0 ? '#10b981' : '#666' }}>
@@ -480,7 +480,7 @@ export default function Campaigns() {
                           }}
                           title="Analizar campaña"
                         >
-                          📊
+                          Analizar
                         </button>
 
                         {/* Botón Editar */}
@@ -499,7 +499,7 @@ export default function Campaigns() {
                           }}
                           title="Editar campaña"
                         >
-                          ✏️
+                          Editar
                         </button>
 
                         {/* Botones condicionales según estado */}
@@ -519,7 +519,7 @@ export default function Campaigns() {
                             }}
                             title="Activar campaña"
                           >
-                            ▶️
+                            Activar
                           </button>
                         )}
 
@@ -540,7 +540,7 @@ export default function Campaigns() {
                               }}
                               title="Pausar campaña"
                             >
-                              ⏸️
+                              Pausar
                             </button>
                             <button
                               onClick={() => handleCompleteCampaign(campaign)}
@@ -557,7 +557,7 @@ export default function Campaigns() {
                               }}
                               title="Completar campaña"
                             >
-                              ✅
+                              Completar
                             </button>
                           </>
                         )}
@@ -578,7 +578,7 @@ export default function Campaigns() {
                             }}
                             title="Reactivar campaña"
                           >
-                            ▶️
+                            Reactivar
                           </button>
                         )}
 
@@ -598,7 +598,7 @@ export default function Campaigns() {
                           }}
                           title="Gestionar clientes"
                         >
-                          �
+                          Gestionar clientes
                         </button>
 
                         {/* Botón Desactivar (solo para campañas completadas o pausadas) */}
@@ -618,7 +618,7 @@ export default function Campaigns() {
                             }}
                             title="Desactivar campaña"
                           >
-                            🗑️
+                            Desactivar
                           </button>
                         )}
                       </div>
@@ -646,7 +646,7 @@ export default function Campaigns() {
         borderRadius: '8px'
       }}>
         <h2 style={{ margin: 0, color: '#333' }}>
-          {isEditing ? '✏️ Editar Campaña' : '➕ Nueva Campaña'}
+          {isEditing ? 'Editar Campaña' : 'Nueva Campaña'}
         </h2>
         <button
           onClick={() => {
@@ -872,7 +872,7 @@ export default function Campaigns() {
                 fontWeight: '600'
               }}
             >
-              {isEditing ? '💾 Actualizar Campaña' : '✅ Crear Campaña'}
+              {isEditing ? 'Actualizar Campaña' : 'Crear Campaña'}
             </button>
           </div>
         </form>
@@ -892,7 +892,7 @@ export default function Campaigns() {
         background: '#f8f9fa',
         borderRadius: '8px'
       }}>
-        <h2 style={{ margin: 0, color: '#333' }}>🔍 Segmentación de Clientes</h2>
+        <h2 style={{ margin: 0, color: '#333' }}>Segmentación de Clientes</h2>
         <div>
           <button
             onClick={loadSegmentedClients}
@@ -906,7 +906,7 @@ export default function Campaigns() {
               marginRight: '0.5rem'
             }}
           >
-            🔄 Actualizar Segmentación
+            Actualizar Segmentación
           </button>
           <button
             onClick={() => setActiveView('list')}
@@ -926,7 +926,7 @@ export default function Campaigns() {
 
       {segmentationLoading ? (
         <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <p>🔄 Analizando comportamiento de clientes...</p>
+          <p>Analizando comportamiento de clientes...</p>
         </div>
       ) : segmentedClients.length > 0 ? (
         <div>
@@ -1045,7 +1045,7 @@ export default function Campaigns() {
         </div>
       ) : (
         <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <p>📊 Haz clic en "Actualizar Segmentación" para analizar los clientes</p>
+          <p>Haz clic en "Actualizar Segmentación" para analizar los clientes</p>
         </div>
       )}
     </div>
@@ -1063,7 +1063,7 @@ export default function Campaigns() {
         background: '#f8f9fa',
         borderRadius: '8px'
       }}>
-        <h2 style={{ margin: 0, color: '#333' }}>📊 Análisis de Campaña: {selectedCampaign?.name}</h2>
+        <h2 style={{ margin: 0, color: '#333' }}>Análisis de Campaña: {selectedCampaign?.name}</h2>
         <button
           onClick={() => setActiveView('list')}
           style={{
@@ -1109,7 +1109,7 @@ export default function Campaigns() {
           {/* Detalles de clientes en la campaña */}
           <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
             <div style={{ padding: '1rem', background: '#f8f9fa', borderBottom: '1px solid #e5e7eb' }}>
-              <h3 style={{ margin: 0 }}>👥 Clientes en la Campaña</h3>
+              <h3 style={{ margin: 0 }}>Clientes en la Campaña</h3>
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
@@ -1164,9 +1164,9 @@ export default function Campaigns() {
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
     }}>
       {[
-        { key: 'list', label: '📋 Campañas', icon: '📋' },
-        { key: 'create', label: '➕ Nueva', icon: '➕' },
-        { key: 'segmentation', label: '🔍 Segmentación', icon: '🔍' }
+        { key: 'list', label: 'Campañas', icon: '📋' },
+        { key: 'create', label: 'Nueva', icon: '➕' },
+        { key: 'segmentation', label: 'Segmentación', icon: '🔍' }
       ].map(nav => (
         <button
           key={nav.key}
@@ -1221,7 +1221,7 @@ export default function Campaigns() {
             marginBottom: '2rem'
           }}>
             <h2 style={{ margin: 0, color: '#333' }}>
-              👥 Gestionar Clientes - {selectedCampaign?.name}
+              Gestionar Clientes - {selectedCampaign?.name}
             </h2>
             <button
               onClick={() => setShowClientModal(false)}

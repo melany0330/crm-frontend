@@ -45,7 +45,7 @@ export default function CRMLayout() {
           border: '1px solid #e9ecef'
         }}>
           <h3 style={{ marginBottom: '1rem', color: '#333', fontSize: '1.2rem' }}>
-            🧭 Navegación CRM
+            Navegación CRM
           </h3>
           <nav style={{
             display: "flex",
@@ -54,31 +54,31 @@ export default function CRMLayout() {
             justifyContent: "center"
           }}>
             <NavLink to="/crm" end style={linkStyle}>
-              🏠 Inicio
+              Inicio
             </NavLink>
             <NavLink to="/crm/clients" style={linkStyle}>
-              👥 Clientes
+              Clientes
             </NavLink>
             <NavLink to="/crm/opportunities" style={linkStyle}>
-              🎯 Oportunidades
+              Oportunidades
             </NavLink>
             <NavLink to="/crm/activities" style={linkStyle}>
-              📋 Actividades
+              Actividades
             </NavLink>
             <NavLink to="/crm/campaigns" style={linkStyle}>
-              📱 Campañas
+              Campañas
             </NavLink>
             <NavLink to="/crm/reports" style={linkStyle}>
-              📊 Reportes
+              Reportes
             </NavLink>
             <NavLink to="/crm/quotes" style={linkStyle}>
-              📝 Cotizaciones
+              Cotizaciones
             </NavLink>
             <NavLink to="/crm/offers" style={linkStyle}>
-              📝 Ofertas
+              Ofertas
             </NavLink>
             <NavLink to="/crm/suggestions" style={linkStyle}>
-              📝 Sugerencias
+              Sugerencias
             </NavLink>
           </nav>
         </div>

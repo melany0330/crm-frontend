@@ -44,8 +44,8 @@ export default function CRMShell() {
           </nav>
 
           <div className="crm-sidebar-note">
-            <p>Universidad Mesoamericana</p>
-            <p className="crm-small">Programa Comercial – Octavo “E”</p>
+            <p>Sí, Chef CRM</p>
+            <p className="crm-small">crms prácticos</p>
           </div>
         </aside>
 
