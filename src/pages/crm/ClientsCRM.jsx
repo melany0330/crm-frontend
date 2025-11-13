@@ -264,367 +264,588 @@ export default function ClientsCRM() {
   const money = (n) =>
     typeof n === "number" && Number.isFinite(n) ? n.toFixed(2) : n ?? "-";
 
+  const getTabIcon = (tab) => {
+    const icons = {
+      'datos': '📋',
+      'compras': '🛒',
+      'cotizaciones': '📄',
+      'actividades': '📅'
+    };
+    return icons[tab] || '📋';
+  };
+
   return (
-    <div style={{ display: "grid", gap: 16, gridTemplateColumns: "1fr 1.6fr", alignItems: "start" }}>
-      {/* Izquierda: clientes */}
-      <div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-          <h3 style={{ margin: 0 }}>Clientes</h3>
-          <input
-            placeholder="Buscar por NIT, nombre o correo…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            style={{ marginLeft: "auto", padding: "6px 10px", borderRadius: 8, border: "1px solid #e5e7eb" }}
-          />
-        </div>
-        <div style={{ border: "1px solid #e5e7eb", borderRadius: 8, overflow: "hidden" }}>
-          <table className="table" style={{ width: "100%", margin: 0 }}>
-            <thead>
-              <tr>
-                <th style={{ width: 120 }}>NIT</th>
-                <th>Nombre</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={3} style={{ textAlign: "center" }}>
-                    No hay clientes.
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((c) => {
-                  const id = v(c, ["clientId", "idClient", "idCliente", "id"]);
-                  const nit = v(c, ["nit", "nitCliente"]);
-                  const nombre = [v(c, ["name", "nombre", "nombreCliente"]), v(c, ["lastName", "apellidoCliente"])]
-                    .filter(Boolean)
-                    .join(" ");
-                  const email = v(c, ["email", "correo", "correoCliente"]);
-                  const sel = selected && Number(id) === Number(v(selected, ["clientId", "idClient", "idCliente", "id"]));
-                  return (
-                    <tr
-                      key={id ?? nit}
-                      onClick={() => setSelected(c)}
-                      style={{ cursor: "pointer", background: sel ? "#eef6ff" : "" }}
-                    >
-                      <td>{nit || "-"}</td>
-                      <td>{nombre || "-"}</td>
-                      <td>{email || "-"}</td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+    <div style={{ padding: '1rem' }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '2rem',
+        padding: '1rem',
+        background: '#f8f9fa',
+        borderRadius: '8px'
+      }}>
+        <h2 style={{ margin: 0, color: '#333' }}>👥 Gestión de Clientes</h2>
+        <input
+          placeholder="🔍 Buscar por NIT, nombre o correo…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{
+            padding: '0.75rem 1rem',
+            borderRadius: '8px',
+            border: '1px solid #e5e7eb',
+            minWidth: '300px',
+            fontSize: '0.9rem'
+          }}
+        />
       </div>
 
-      {/* Derecha */}
-      <div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-          <h3 style={{ margin: 0 }}>
-            Cliente{" "}
-            {selected
-              ? `· NIT: ${v(selected, ["nit", "nitCliente"]) || "-"} · Correo: ${
-                  v(selected, ["email", "correo", "correoCliente"]) || "-"
-                }`
-              : ""}
-          </h3>
-        </div>
-
-        {selectedId && (
-          <div style={{ marginBottom: 8 }}>
-            <button
-              onClick={() => loadAllForClient(selectedId)}
-              style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid #e5e7eb" }}
-            >
-              Refrescar
-            </button>
-          </div>
-        )}
-
-        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-          {["datos", "compras", "cotizaciones", "actividades"].map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              style={{
-                padding: "6px 10px",
-                borderRadius: 999,
-                border: tab === t ? "1px solid #111" : "1px solid #e5e7eb",
-                background: tab === t ? "#111" : "#fff",
-                color: tab === t ? "#fff" : "#111",
-                cursor: "pointer",
-              }}
-            >
-              {t[0].toUpperCase() + t.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        {/* Datos */}
-        {tab === "datos" && selected && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 12,
-              padding: 12,
-              border: "1px solid #e5e7eb",
-              borderRadius: 8,
-            }}
-          >
-            <div>
-              <b>NIT:</b> {v(selected, ["nit", "nitCliente"]) || "-"}
-            </div>
-            <div>
-              <b>Nombre:</b>{" "}
-              {[v(selected, ["name", "nombre", "nombreCliente"]), v(selected, ["lastName", "apellidoCliente"])]
-                .filter(Boolean)
-                .join(" ") || "-"}
-            </div>
-            <div>
-              <b>Correo:</b> {v(selected, ["email", "correo", "correoCliente"]) || "-"}
-            </div>
-            <div>
-              <b>Teléfono:</b> {v(selected, ["phone", "telefonoCliente"]) || "-"}
-            </div>
-            <div style={{ gridColumn: "1 / -1" }}>
-              <b>Dirección:</b> {v(selected, ["address", "direccionCliente"]) || "-"}
-            </div>
-          </div>
-        )}
-
-        {/* Compras */}
-        {tab === "compras" && (
-          <section style={{ marginBottom: 16 }}>
-            <h4 style={{ margin: "0 0 8px" }}>
-              Historial de compras {sales.length ? `(${sales.length})` : ""}
-            </h4>
-            {errors.sales && <p style={{ color: "crimson" }}>{errors.sales}</p>}
-            <table className="table" style={{ width: "100%" }}>
+      <div style={{ display: "grid", gap: '2rem', gridTemplateColumns: "1fr 1.6fr", alignItems: "start" }}>
+        {/* Izquierda: Lista de clientes */}
+        <div>
+          <div style={{
+            background: 'white',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}>
+            <table style={{ width: "100%", borderCollapse: 'collapse' }}>
               <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Total</th>
-                  <th>Estado</th>
-                  <th style={{ width: 150, textAlign: "right" }}>Detalle</th>
+                <tr style={{ background: '#667eea', color: 'white' }}>
+                  <th style={{ padding: '1rem', textAlign: 'left', width: '120px' }}>NIT</th>
+                  <th style={{ padding: '1rem', textAlign: 'left' }}>Nombre</th>
+                  <th style={{ padding: '1rem', textAlign: 'left' }}>Email</th>
                 </tr>
               </thead>
               <tbody>
-                {loading.sales ? (
+                {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={4}>Cargando…</td>
-                  </tr>
-                ) : sales.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} style={{ textAlign: "center" }}>
-                      Sin compras.
+                    <td colSpan={3} style={{ textAlign: "center", padding: '2rem', color: '#666' }}>
+                      📭 No hay clientes registrados
                     </td>
                   </tr>
                 ) : (
-                  sales.map((s) => {
-                    const idSale = Number(v(s, ["idVenta", "idSale", "id"]));
-                    const isOpen = expandedSales.has(idSale);
-                    const detailErr = errors.saleDetail[idSale];
-                    const detailLoading = !!loading.saleDetail[idSale];
-                    const items = saleDetails[idSale] || [];
+                  filtered.map((c) => {
+                    const id = v(c, ["clientId", "idClient", "idCliente", "id"]);
+                    const nit = v(c, ["nit", "nitCliente"]);
+                    const nombre = [v(c, ["name", "nombre", "nombreCliente"]), v(c, ["lastName", "apellidoCliente"])]
+                      .filter(Boolean)
+                      .join(" ");
+                    const email = v(c, ["email", "correo", "correoCliente"]);
+                    const sel = selected && Number(id) === Number(v(selected, ["clientId", "idClient", "idCliente", "id"]));
                     return (
-                      <React.Fragment key={idSale}>
-                        <tr>
-                          <td>{fmt(v(s, ["fechaVenta", "saleDate", "createdAt"]))}</td>
-                          <td>{money(v(s, ["total"]))}</td>
-                          <td>{Number(v(s, ["estado", "status"])) === 1 ? "Activa" : "Inactiva"}</td>
-                          <td style={{ textAlign: "right" }}>
-                            <button
-                              className="btn btn-outline btn-sm"
-                              onClick={() => toggleSaleDetail(s)}
-                              disabled={detailLoading}
-                            >
-                              {isOpen ? "Ocultar detalle" : "Ver detalle"}
-                            </button>
-                          </td>
-                        </tr>
-                        {isOpen && (
-                          <tr>
-                            <td colSpan={4} style={{ background: "#fafafa" }}>
-                              {detailErr && (
-                                <div style={{ color: "crimson", marginBottom: 8 }}>{detailErr}</div>
-                              )}
-                              {detailLoading ? (
-                                <div>Cargando detalle…</div>
-                              ) : items.length === 0 ? (
-                                <div>No hay ítems para esta venta.</div>
-                              ) : (
-                                <table className="table" style={{ width: "100%", marginTop: 8 }}>
-                                  <thead>
-                                    <tr>
-                                      <th>Producto</th>
-                                      <th style={{ width: 120 }}>Cantidad</th>
-                                      <th style={{ width: 140 }}>Precio</th>
-                                      <th style={{ width: 140 }}>Subtotal</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {items.map((it, idx) => (
-                                      <tr key={idx}>
-                                        <td>{it.name}</td>
-                                        <td>{it.qty}</td>
-                                        <td>{money(it.price)}</td>
-                                        <td>{money(it.subtotal)}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              )}
-                            </td>
-                          </tr>
-                        )}
-                      </React.Fragment>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </section>
-        )}
-
-        {/* Cotizaciones */}
-        {tab === "cotizaciones" && (
-          <section style={{ marginBottom: 16 }}>
-            <h4 style={{ margin: "0 0 8px" }}>
-              Cotizaciones {quotes.length ? `(${quotes.length})` : ""}
-            </h4>
-            {errors.quotes && <p style={{ color: "crimson" }}>{errors.quotes}</p>}
-            <table className="table" style={{ width: "100%" }}>
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Total</th>
-                  <th>Estado</th>
-                  <th style={{ width: 150, textAlign: "right" }}>Detalle</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading.quotes ? (
-                  <tr>
-                    <td colSpan={4}>Cargando…</td>
-                  </tr>
-                ) : quotes.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} style={{ textAlign: "center" }}>
-                      Sin cotizaciones.
-                    </td>
-                  </tr>
-                ) : (
-                  quotes.map((q) => {
-                    const idQuote = Number(v(q, ["idQuote", "idCotizacion", "id"]));
-                    const isOpen = expandedQuotes.has(idQuote);
-                    const detailErr = errors.quoteDetail[idQuote];
-                    const detailLoading = !!loading.quoteDetail[idQuote];
-                    const items = quoteDetails[idQuote] || [];
-                    return (
-                      <React.Fragment key={idQuote}>
-                        <tr>
-                          <td>{fmt(v(q, ["quoteDate", "fechaCotizacion", "createdAt"]))}</td>
-                          <td>{money(v(q, ["total"]))}</td>
-                          <td>{v(q, ["status", "estado"]) ?? "-"}</td>
-                          <td style={{ textAlign: "right" }}>
-                            <button
-                              className="btn btn-outline btn-sm"
-                              onClick={() => toggleQuoteDetail(q)}
-                              disabled={detailLoading}
-                            >
-                              {isOpen ? "Ocultar detalle" : "Ver detalle"}
-                            </button>
-                          </td>
-                        </tr>
-                        {isOpen && (
-                          <tr>
-                            <td colSpan={4} style={{ background: "#fafafa" }}>
-                              {detailErr && (
-                                <div style={{ color: "crimson", marginBottom: 8 }}>{detailErr}</div>
-                              )}
-                              {detailLoading ? (
-                                <div>Cargando detalle…</div>
-                              ) : items.length === 0 ? (
-                                <div>No hay ítems para esta cotización.</div>
-                              ) : (
-                                <table className="table" style={{ width: "100%", marginTop: 8 }}>
-                                  <thead>
-                                    <tr>
-                                      <th>Producto</th>
-                                      <th style={{ width: 120 }}>Cantidad</th>
-                                      <th style={{ width: 140 }}>Precio</th>
-                                      <th style={{ width: 140 }}>Subtotal</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {items.map((it, idx) => (
-                                      <tr key={idx}>
-                                        <td>{it.name}</td>
-                                        <td>{it.qty}</td>
-                                        <td>{money(it.price)}</td>
-                                        <td>{money(it.subtotal)}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              )}
-                            </td>
-                          </tr>
-                        )}
-                      </React.Fragment>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </section>
-        )}
-
-        {/* Actividades */}
-        {tab === "actividades" && (
-          <section>
-            <h4 style={{ margin: "0 0 8px" }}>
-              Actividades {acts.length ? `(${acts.length})` : ""}
-            </h4>
-            {errors.acts && <p style={{ color: "crimson" }}>{errors.acts}</p>}
-            <ul style={{ marginTop: 6 }}>
-              {loading.acts ? (
-                <li>Cargando…</li>
-              ) : acts.length === 0 ? (
-                <li>Sin actividades registradas.</li>
-              ) : (
-                acts.map((a) => {
-                  const id = v(a, ["idActivity", "idActividad", "id"]);
-                  const tipo = v(a, ["activityType", "type", "tipo", "tipoActividad"]) || "Actividad";
-                  const desc = v(a, ["description", "title", "asunto", "descripcion"]) || "-";
-                  const fecha = v(a, ["activityDate", "date", "fecha", "fechaActividad", "createdAt"]);
-                  return (
-                    <li key={id} style={{ padding: "6px 0", borderBottom: "1px dashed #e5e7eb" }}>
-                      <span
+                      <tr
+                        key={id ?? nit}
+                        onClick={() => setSelected(c)}
                         style={{
-                          fontSize: 12,
-                          padding: "2px 8px",
-                          borderRadius: 999,
-                          background: "#eef2ff",
-                          color: "#111827",
-                          border: "1px solid #e5e7eb",
-                          marginRight: 8,
+                          cursor: "pointer",
+                          background: sel ? "#eef6ff" : "transparent",
+                          borderBottom: '1px solid #e5e7eb',
+                          transition: 'background-color 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!sel) e.target.style.backgroundColor = '#f8f9fa';
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!sel) e.target.style.backgroundColor = 'transparent';
                         }}
                       >
-                        {tipo}
-                      </span>
-                      <b>{desc}</b> <span style={{ color: "#64748b" }}>({fmt(fecha)})</span>
-                    </li>
-                  );
-                })
+                        <td style={{ padding: '1rem', fontWeight: '600' }}>{nit || "-"}</td>
+                        <td style={{ padding: '1rem' }}>{nombre || "-"}</td>
+                        <td style={{ padding: '1rem', color: '#666', fontSize: '0.9rem' }}>{email || "-"}</td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Derecha: Detalles del cliente */}
+        <div>
+          <div style={{
+            background: '#f8f9fa',
+            padding: '1rem',
+            borderRadius: '8px',
+            marginBottom: '1rem'
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ margin: 0, color: '#333' }}>
+                {selected ? (
+                  <>
+                    Cliente Seleccionado
+                    <div style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.25rem' }}>
+                      NIT: {v(selected, ["nit", "nitCliente"]) || "-"} •
+                      Email: {v(selected, ["email", "correo", "correoCliente"]) || "-"}
+                    </div>
+                  </>
+                ) : (
+                  "Selecciona un cliente"
+                )}
+              </h3>
+              {selectedId && (
+                <button
+                  onClick={() => loadAllForClient(selectedId)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    background: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  🔄 Refrescar
+                </button>
               )}
-            </ul>
-          </section>
-        )}
+            </div>
+          </div>
+
+          {selected && (
+            <div style={{ display: "flex", gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+              {["datos", "compras", "cotizaciones", "actividades"].map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: tab === t ? '#667eea' : 'white',
+                    color: tab === t ? 'white' : '#333',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (tab !== t) {
+                      e.target.style.background = '#f8f9fa';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (tab !== t) {
+                      e.target.style.background = 'white';
+                    }
+                  }}
+                >
+                  {getTabIcon(t)} {t[0].toUpperCase() + t.slice(1)}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Datos del cliente */}
+          {tab === "datos" && selected && (
+            <div style={{
+              background: 'white',
+              borderRadius: '8px',
+              padding: '2rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <h4 style={{ margin: '0 0 1.5rem 0', color: '#333', borderBottom: '2px solid #667eea', paddingBottom: '0.5rem' }}>
+                📋 Información del Cliente
+              </h4>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: '1.5rem'
+              }}>
+                <div style={{ padding: '1rem', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <div style={{ fontWeight: '600', color: '#667eea', marginBottom: '0.25rem' }}>NIT</div>
+                  <div style={{ fontSize: '1.1rem' }}>{v(selected, ["nit", "nitCliente"]) || "-"}</div>
+                </div>
+                <div style={{ padding: '1rem', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <div style={{ fontWeight: '600', color: '#667eea', marginBottom: '0.25rem' }}>Nombre Completo</div>
+                  <div style={{ fontSize: '1.1rem' }}>
+                    {[v(selected, ["name", "nombre", "nombreCliente"]), v(selected, ["lastName", "apellidoCliente"])]
+                      .filter(Boolean)
+                      .join(" ") || "-"}
+                  </div>
+                </div>
+                <div style={{ padding: '1rem', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <div style={{ fontWeight: '600', color: '#667eea', marginBottom: '0.25rem' }}>Correo Electrónico</div>
+                  <div style={{ fontSize: '1.1rem' }}>{v(selected, ["email", "correo", "correoCliente"]) || "-"}</div>
+                </div>
+                <div style={{ padding: '1rem', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <div style={{ fontWeight: '600', color: '#667eea', marginBottom: '0.25rem' }}>Teléfono</div>
+                  <div style={{ fontSize: '1.1rem' }}>{v(selected, ["phone", "telefonoCliente"]) || "-"}</div>
+                </div>
+                <div style={{ gridColumn: "1 / -1", padding: '1rem', background: '#f8f9fa', borderRadius: '6px' }}>
+                  <div style={{ fontWeight: '600', color: '#667eea', marginBottom: '0.25rem' }}>Dirección</div>
+                  <div style={{ fontSize: '1.1rem' }}>{v(selected, ["address", "direccionCliente"]) || "-"}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Compras */}
+          {tab === "compras" && (
+            <div style={{
+              background: 'white',
+              borderRadius: '8px',
+              padding: '2rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <h4 style={{ margin: '0 0 1.5rem 0', color: '#333', borderBottom: '2px solid #10b981', paddingBottom: '0.5rem' }}>
+                🛒 Historial de Compras {sales.length ? `(${sales.length})` : ""}
+              </h4>
+              {errors.sales && (
+                <div style={{
+                  background: '#fee2e2',
+                  color: '#dc2626',
+                  padding: '1rem',
+                  borderRadius: '6px',
+                  marginBottom: '1rem',
+                  border: '1px solid #fecaca'
+                }}>
+                  {errors.sales}
+                </div>
+              )}
+              <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                <table style={{ width: "100%", borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#10b981', color: 'white' }}>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Fecha</th>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Total</th>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Estado</th>
+                      <th style={{ padding: '1rem', textAlign: 'right' }}>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading.sales ? (
+                      <tr>
+                        <td colSpan={4}>Cargando…</td>
+                      </tr>
+                    ) : sales.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} style={{ textAlign: "center" }}>
+                          Sin compras.
+                        </td>
+                      </tr>
+                    ) : (
+                      sales.map((s) => {
+                        const idSale = Number(v(s, ["idVenta", "idSale", "id"]));
+                        const isOpen = expandedSales.has(idSale);
+                        const detailErr = errors.saleDetail[idSale];
+                        const detailLoading = !!loading.saleDetail[idSale];
+                        const items = saleDetails[idSale] || [];
+                        return (
+                          <React.Fragment key={idSale}>
+                            <tr style={{
+                              transition: 'background-color 0.2s ease',
+                              ':hover': { backgroundColor: '#f8f9fa' }
+                            }}>
+                              <td style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb' }}>{fmt(v(s, ["fechaVenta", "saleDate", "createdAt"]))}</td>
+                              <td style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb', fontWeight: '600', color: '#10b981' }}>{money(v(s, ["total"]))}</td>
+                              <td style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb' }}>
+                                <span style={{
+                                  padding: '0.25rem 0.75rem',
+                                  borderRadius: '12px',
+                                  fontSize: '0.875rem',
+                                  backgroundColor: Number(v(s, ["estado", "status"])) === 1 ? '#dcfce7' : '#fee2e2',
+                                  color: Number(v(s, ["estado", "status"])) === 1 ? '#166534' : '#dc2626'
+                                }}>
+                                  {Number(v(s, ["estado", "status"])) === 1 ? "Activa" : "Inactiva"}
+                                </span>
+                              </td>
+                              <td style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb', textAlign: "right" }}>
+                                <button
+                                  style={{
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: '6px',
+                                    border: '1px solid #10b981',
+                                    background: 'white',
+                                    color: '#10b981',
+                                    cursor: 'pointer',
+                                    fontSize: '0.875rem',
+                                    transition: 'all 0.2s ease'
+                                  }}
+                                  onMouseOver={(e) => {
+                                    e.target.style.background = '#10b981';
+                                    e.target.style.color = 'white';
+                                  }}
+                                  onMouseOut={(e) => {
+                                    e.target.style.background = 'white';
+                                    e.target.style.color = '#10b981';
+                                  }}
+                                  onClick={() => toggleSaleDetail(s)}
+                                  disabled={detailLoading}
+                                >
+                                  {isOpen ? "Ocultar detalle" : "Ver detalle"}
+                                </button>
+                              </td>
+                            </tr>
+                            {isOpen && (
+                              <tr>
+                                <td colSpan={4} style={{ background: "#fafafa" }}>
+                                  {detailErr && (
+                                    <div style={{ color: "crimson", marginBottom: 8 }}>{detailErr}</div>
+                                  )}
+                                  {detailLoading ? (
+                                    <div>Cargando detalle…</div>
+                                  ) : items.length === 0 ? (
+                                    <div>No hay ítems para esta venta.</div>
+                                  ) : (
+                                    <table className="table" style={{ width: "100%", marginTop: 8 }}>
+                                      <thead>
+                                        <tr>
+                                          <th>Producto</th>
+                                          <th style={{ width: 120 }}>Cantidad</th>
+                                          <th style={{ width: 140 }}>Precio</th>
+                                          <th style={{ width: 140 }}>Subtotal</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {items.map((it, idx) => (
+                                          <tr key={idx}>
+                                            <td>{it.name}</td>
+                                            <td>{it.qty}</td>
+                                            <td>{money(it.price)}</td>
+                                            <td>{money(it.subtotal)}</td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  )}
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Cotizaciones */}
+          {tab === "cotizaciones" && (
+            <div style={{
+              background: '#f8f9fa',
+              borderRadius: '12px',
+              padding: '2rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <h4 style={{ margin: '0 0 1.5rem 0', color: '#333', borderBottom: '2px solid #3b82f6', paddingBottom: '0.5rem' }}>
+                📋 Cotizaciones {quotes.length ? `(${quotes.length})` : ""}
+              </h4>
+              {errors.quotes && (
+                <div style={{
+                  background: '#fee2e2',
+                  color: '#dc2626',
+                  padding: '1rem',
+                  borderRadius: '6px',
+                  marginBottom: '1rem',
+                  border: '1px solid #fecaca'
+                }}>
+                  {errors.quotes}
+                </div>
+              )}
+              <div style={{ background: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                <table style={{ width: "100%", borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#3b82f6', color: 'white' }}>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Fecha</th>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Total</th>
+                      <th style={{ padding: '1rem', textAlign: 'left' }}>Estado</th>
+                      <th style={{ padding: '1rem', textAlign: 'right' }}>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading.quotes ? (
+                      <tr>
+                        <td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>Cargando…</td>
+                      </tr>
+                    ) : quotes.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} style={{ padding: '2rem', textAlign: "center", color: '#6b7280' }}>
+                          Sin cotizaciones.
+                        </td>
+                      </tr>
+                    ) : (
+                      quotes.map((q) => {
+                        const idQuote = Number(v(q, ["idQuote", "idCotizacion", "id"]));
+                        const isOpen = expandedQuotes.has(idQuote);
+                        const detailErr = errors.quoteDetail[idQuote];
+                        const detailLoading = !!loading.quoteDetail[idQuote];
+                        const items = quoteDetails[idQuote] || [];
+                        return (
+                          <React.Fragment key={idQuote}>
+                            <tr style={{
+                              transition: 'background-color 0.2s ease',
+                              ':hover': { backgroundColor: '#f8f9fa' }
+                            }}>
+                              <td style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb' }}>{fmt(v(q, ["quoteDate", "fechaCotizacion", "createdAt"]))}</td>
+                              <td style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb', fontWeight: '600', color: '#3b82f6' }}>{money(v(q, ["total"]))}</td>
+                              <td style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb' }}>
+                                <span style={{
+                                  padding: '0.25rem 0.75rem',
+                                  borderRadius: '12px',
+                                  fontSize: '0.875rem',
+                                  backgroundColor: '#dbeafe',
+                                  color: '#1e40af'
+                                }}>
+                                  {v(q, ["status", "estado"]) ?? "Pendiente"}
+                                </span>
+                              </td>
+                              <td style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb', textAlign: "right" }}>
+                                <button
+                                  style={{
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: '6px',
+                                    border: '1px solid #3b82f6',
+                                    background: 'white',
+                                    color: '#3b82f6',
+                                    cursor: 'pointer',
+                                    fontSize: '0.875rem',
+                                    transition: 'all 0.2s ease'
+                                  }}
+                                  onMouseOver={(e) => {
+                                    e.target.style.background = '#3b82f6';
+                                    e.target.style.color = 'white';
+                                  }}
+                                  onMouseOut={(e) => {
+                                    e.target.style.background = 'white';
+                                    e.target.style.color = '#3b82f6';
+                                  }}
+                                  onClick={() => toggleQuoteDetail(q)}
+                                  disabled={detailLoading}
+                                >
+                                  {isOpen ? "Ocultar detalle" : "Ver detalle"}
+                                </button>
+                              </td>
+                            </tr>
+                            {isOpen && (
+                              <tr>
+                                <td colSpan={4} style={{ background: "#fafafa" }}>
+                                  {detailErr && (
+                                    <div style={{ color: "crimson", marginBottom: 8 }}>{detailErr}</div>
+                                  )}
+                                  {detailLoading ? (
+                                    <div>Cargando detalle…</div>
+                                  ) : items.length === 0 ? (
+                                    <div>No hay ítems para esta cotización.</div>
+                                  ) : (
+                                    <table className="table" style={{ width: "100%", marginTop: 8 }}>
+                                      <thead>
+                                        <tr>
+                                          <th>Producto</th>
+                                          <th style={{ width: 120 }}>Cantidad</th>
+                                          <th style={{ width: 140 }}>Precio</th>
+                                          <th style={{ width: 140 }}>Subtotal</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {items.map((it, idx) => (
+                                          <tr key={idx}>
+                                            <td>{it.name}</td>
+                                            <td>{it.qty}</td>
+                                            <td>{money(it.price)}</td>
+                                            <td>{money(it.subtotal)}</td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  )}
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Actividades */}
+          {tab === "actividades" && (
+            <div style={{
+              background: '#f8f9fa',
+              borderRadius: '12px',
+              padding: '2rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <h4 style={{ margin: '0 0 1.5rem 0', color: '#333', borderBottom: '2px solid #8b5cf6', paddingBottom: '0.5rem' }}>
+                🎯 Actividades {acts.length ? `(${acts.length})` : ""}
+              </h4>
+              {errors.acts && (
+                <div style={{
+                  background: '#fee2e2',
+                  color: '#dc2626',
+                  padding: '1rem',
+                  borderRadius: '6px',
+                  marginBottom: '1rem',
+                  border: '1px solid #fecaca'
+                }}>
+                  {errors.acts}
+                </div>
+              )}
+              <div style={{ background: 'white', borderRadius: '8px', padding: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                {loading.acts ? (
+                  <div style={{ textAlign: 'center', color: '#6b7280', padding: '2rem' }}>Cargando actividades...</div>
+                ) : acts.length === 0 ? (
+                  <div style={{ textAlign: 'center', color: '#6b7280', padding: '2rem' }}>No hay actividades registradas.</div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {acts.map((a) => {
+                      const id = v(a, ["idActivity", "idActividad", "id"]);
+                      const tipo = v(a, ["activityType", "type", "tipo", "tipoActividad"]) || "Actividad";
+                      const desc = v(a, ["description", "title", "asunto", "descripcion"]) || "-";
+                      const fecha = v(a, ["activityDate", "date", "fecha", "fechaActividad", "createdAt"]);
+                      return (
+                        <div key={id} style={{
+                          background: '#fff',
+                          borderRadius: '8px',
+                          padding: '1.5rem',
+                          border: '1px solid #e5e7eb',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                        }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                          }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                            <span style={{
+                              fontSize: '0.75rem',
+                              padding: '0.25rem 0.75rem',
+                              borderRadius: '12px',
+                              background: '#f3e8ff',
+                              color: '#7c3aed',
+                              border: '1px solid #e9d5ff',
+                              fontWeight: '600'
+                            }}>
+                              {tipo}
+                            </span>
+                            <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                              {fmt(fecha)}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '1rem', fontWeight: '600', color: '#374151' }}>
+                            {desc}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

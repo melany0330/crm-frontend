@@ -14,6 +14,11 @@ class OpportunitiesService {
       .then(r => r.data?.data ?? r.data);
   }
 
+  listByStatus(status) {
+    return this.ss.authSend(`/api/opportunities/listByStatus/${status}`, "GET")
+      .then(r => r.data?.data ?? r.data);
+  }
+
   getById(idOpportunity) {
     return this.ss.authSend(`/api/opportunities/listById/${idOpportunity}`, "GET")
       .then(r => r.data?.data ?? r.data);
@@ -30,7 +35,12 @@ class OpportunitiesService {
   }
 
   changeStatus(idOpportunity, statusDto) {
-    return this.ss.authSend(`/api/opportunities/changeStatus/${idOpportunity}`, "PUT", statusDto)
+    return this.ss.authSend(`/api/opportunities/updateStatus/${idOpportunity}`, "PUT", statusDto)
+      .then(r => r.data?.data ?? r.data);
+  }
+
+  suggestions() {
+    return this.ss.authSend("/api/opportunities/suggestions", "GET")
       .then(r => r.data?.data ?? r.data);
   }
 
