@@ -54,7 +54,7 @@ export default function CRMHome() {
         color: 'white',
         textAlign: 'center'
       }}>
-        <h2 style={{ margin: 0, fontSize: '1.8rem' }}>🏠 Dashboard CRM</h2>
+        <h2 style={{ margin: 0, fontSize: '1.8rem' }}>Sí Chef CRM: Dashboard</h2>
         <p style={{ margin: '0.5rem 0 0 0', opacity: 0.9 }}>
           Vista general de clientes y actividades
         </p>
@@ -162,7 +162,7 @@ export default function CRMHome() {
             borderBottom: '2px solid #44a08d',
             paddingBottom: '0.5rem'
           }}>
-            📋 Actividades{" "}
+            Actividades{" "}
             {seleccionado && (
               <span style={{ fontSize: '0.9rem', color: '#666', fontWeight: 'normal' }}>
                 — Cliente: {v(seleccionado, ["nit", "nitCliente"]) || ""} ({v(seleccionado, ["name", "nombre", "nombreCliente"]) || "-"})
@@ -180,7 +180,7 @@ export default function CRMHome() {
               border: '2px dashed #ddd'
             }}>
               <p style={{ fontSize: '1.1rem', margin: 0 }}>
-                👆 Selecciona un cliente para ver sus actividades
+                Seleccione un cliente para ver sus actividades
               </p>
             </div>
           )}
@@ -189,7 +189,7 @@ export default function CRMHome() {
             <>
               {cargandoActs && (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
-                  <p style={{ color: '#666', fontSize: '1.1rem' }}>🔄 Cargando actividades…</p>
+                  <p style={{ color: '#666', fontSize: '1.1rem' }}>Cargando actividades…</p>
                 </div>
               )}
               {!cargandoActs && actividades.length === 0 && (
@@ -201,7 +201,7 @@ export default function CRMHome() {
                   borderRadius: '8px'
                 }}>
                   <p style={{ fontSize: '1.1rem', margin: 0 }}>
-                    📝 Sin actividades registradas
+                    Sin actividades registradas
                   </p>
                 </div>
               )}
@@ -231,7 +231,7 @@ export default function CRMHome() {
                           {titulo}
                         </div>
                         <div style={{ fontSize: '0.9rem', color: '#999' }}>
-                          📅 {fmt(fecha)}
+                          Fecha {fmt(fecha)}
                         </div>
                       </div>
                     );

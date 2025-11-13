@@ -266,10 +266,10 @@ export default function ClientsCRM() {
 
   const getTabIcon = (tab) => {
     const icons = {
-      'datos': '📋',
-      'compras': '🛒',
-      'cotizaciones': '📄',
-      'actividades': '📅'
+      'datos': 'datos',
+      'compras': 'compras',
+      'cotizaciones': 'cotizaciones',
+      'actividades': 'actividades'
     };
     return icons[tab] || '📋';
   };
@@ -286,7 +286,7 @@ export default function ClientsCRM() {
         background: '#f8f9fa',
         borderRadius: '8px'
       }}>
-        <h2 style={{ margin: 0, color: '#333' }}>👥 Gestión de Clientes</h2>
+        <h2 style={{ margin: 0, color: '#333' }}>Gestión de Clientes</h2>
         <input
           placeholder="🔍 Buscar por NIT, nombre o correo…"
           value={query}
@@ -322,7 +322,7 @@ export default function ClientsCRM() {
                 {filtered.length === 0 ? (
                   <tr>
                     <td colSpan={3} style={{ textAlign: "center", padding: '2rem', color: '#666' }}>
-                      📭 No hay clientes registrados
+                      No hay clientes registrados
                     </td>
                   </tr>
                 ) : (
@@ -398,7 +398,7 @@ export default function ClientsCRM() {
                     fontSize: '0.875rem'
                   }}
                 >
-                  🔄 Refrescar
+                  Refrescar
                 </button>
               )}
             </div>
@@ -447,7 +447,7 @@ export default function ClientsCRM() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
             }}>
               <h4 style={{ margin: '0 0 1.5rem 0', color: '#333', borderBottom: '2px solid #667eea', paddingBottom: '0.5rem' }}>
-                📋 Información del Cliente
+                Información del Cliente
               </h4>
               <div style={{
                 display: "grid",
@@ -491,7 +491,7 @@ export default function ClientsCRM() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
             }}>
               <h4 style={{ margin: '0 0 1.5rem 0', color: '#333', borderBottom: '2px solid #10b981', paddingBottom: '0.5rem' }}>
-                🛒 Historial de Compras {sales.length ? `(${sales.length})` : ""}
+                Historial de Compras {sales.length ? `(${sales.length})` : ""}
               </h4>
               {errors.sales && (
                 <div style={{
@@ -633,7 +633,7 @@ export default function ClientsCRM() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
             }}>
               <h4 style={{ margin: '0 0 1.5rem 0', color: '#333', borderBottom: '2px solid #3b82f6', paddingBottom: '0.5rem' }}>
-                📋 Cotizaciones {quotes.length ? `(${quotes.length})` : ""}
+                Cotizaciones {quotes.length ? `(${quotes.length})` : ""}
               </h4>
               {errors.quotes && (
                 <div style={{
@@ -775,7 +775,7 @@ export default function ClientsCRM() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
             }}>
               <h4 style={{ margin: '0 0 1.5rem 0', color: '#333', borderBottom: '2px solid #8b5cf6', paddingBottom: '0.5rem' }}>
-                🎯 Actividades {acts.length ? `(${acts.length})` : ""}
+                Actividades {acts.length ? `(${acts.length})` : ""}
               </h4>
               {errors.acts && (
                 <div style={{
