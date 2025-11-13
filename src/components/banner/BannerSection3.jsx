@@ -4,7 +4,7 @@ import { Autoplay } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { getCatalog } from '../../service/products/productService'
 
-const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}:${import.meta.env.VITE_WMS_PORT}`
+const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}`
 const getImageUrl = (path) => `${BASE_URL}${path}`
 
 const CATEGORY_MAP = [
@@ -79,7 +79,7 @@ const BannerSection3 = () => {
         <div className="container position-relative">
           <div className="fz-3-banner-left-actions">
             <div className="fz-3-banner-search-box">
-              
+
             </div>
           </div>
 
@@ -104,7 +104,7 @@ const BannerSection3 = () => {
                       <div className="fz-def_btn_wrapper">
                         <Link to="/shopProducts" className="fz-def-btn">
                           <span></span>
-                          Comprar  
+                          Comprar
                           <i className="fa-light fa-arrow-up-right"></i>
                         </Link>
                       </div>

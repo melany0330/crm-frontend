@@ -6,9 +6,7 @@ import { toast } from 'react-toastify';
 import { getPurchases, deactivatePurchase } from '../../service/purchases/purchaseService';
 import { useNavigate } from 'react-router-dom';
 
-const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}:${import.meta.env.VITE_WMS_PORT}`;
-
-const PurchasesTable = () => {
+const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}`; const PurchasesTable = () => {
   const navigate = useNavigate();
 
   const [purchases, setPurchases] = useState([]);
@@ -16,31 +14,31 @@ const PurchasesTable = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [purchaseToDeactivate, setPurchaseToDeactivate] = useState(null);
 
-const fetchPurchases = async () => {
-  try {
-    const data = await getPurchases();
-    setPurchases(data);
-  } catch {
-    toast.error('Error al cargar compras');
-  }
-};
+  const fetchPurchases = async () => {
+    try {
+      const data = await getPurchases();
+      setPurchases(data);
+    } catch {
+      toast.error('Error al cargar compras');
+    }
+  };
 
   useEffect(() => {
     fetchPurchases();
   }, []);
 
-const handleDeactivate = async () => {
-  try {
-    await deactivatePurchase(purchaseToDeactivate);
-    toast.success('Compra desactivada correctamente');
-    fetchPurchases();
-  } catch {
-    toast.error('No fue posible desactivar la compra');
-  } finally {
-    setConfirmOpen(false);
-    setPurchaseToDeactivate(null);
-  }
-};
+  const handleDeactivate = async () => {
+    try {
+      await deactivatePurchase(purchaseToDeactivate);
+      toast.success('Compra desactivada correctamente');
+      fetchPurchases();
+    } catch {
+      toast.error('No fue posible desactivar la compra');
+    } finally {
+      setConfirmOpen(false);
+      setPurchaseToDeactivate(null);
+    }
+  };
 
   const toggleExpand = (id) => {
     setExpanded(expanded === id ? null : id);
@@ -48,7 +46,7 @@ const handleDeactivate = async () => {
 
   return (
     <div className="purchases-container">
-            <div className="d-flex justify-content-end mb-3">
+      <div className="d-flex justify-content-end mb-3">
         <button
           className="fz-1-banner-btn"
           onClick={() => navigate('/newPurchase')}
@@ -90,7 +88,7 @@ const handleDeactivate = async () => {
             <div className="purchase-details">
               <p><strong>Fecha de Emisión:</strong> {new Date(purchase.issueDate).toLocaleDateString()}</p>
               <p><strong>Fecha de Compra:</strong> {new Date(purchase.purchase.purchaseDate).toLocaleDateString()}</p>
-              <br/>
+              <br />
               <p><strong>NIT:</strong> {purchase.purchase.provider.nit}</p>
               <p><strong>Email:</strong> {purchase.purchase.provider.email}</p>
               <p><strong>Teléfono:</strong> {purchase.purchase.provider.phone}</p>

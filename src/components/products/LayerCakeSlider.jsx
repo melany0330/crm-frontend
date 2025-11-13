@@ -4,9 +4,7 @@ import { Navigation, Autoplay } from "swiper/modules";
 import { Link } from "react-router-dom";
 import { getCatalog } from "../../service/products/productService";
 
-const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}:${import.meta.env.VITE_WMS_PORT}`;
-
-const LayerCakeSlider = () => {
+const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}`; const LayerCakeSlider = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -76,42 +74,42 @@ const LayerCakeSlider = () => {
             }}
           >
             {products.filter(item => item.idCategory === 3)
-            .slice(0, 6).map((item) => (
-              <SwiperSlide className="fz-3-single-product" key={item.idProduct}>
-                <div className="fz-3-single-product__img">
-                  <img
-                    src={getImageUrl(item.image)}
-                    alt={item.name}
-                    style={{
-                      objectFit: "cover",
-                      height: "250px",
-                      width: "100%",
-                      borderRadius: "8px",
-                    }}
-                  />
-                </div>
+              .slice(0, 6).map((item) => (
+                <SwiperSlide className="fz-3-single-product" key={item.idProduct}>
+                  <div className="fz-3-single-product__img">
+                    <img
+                      src={getImageUrl(item.image)}
+                      alt={item.name}
+                      style={{
+                        objectFit: "cover",
+                        height: "250px",
+                        width: "100%",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  </div>
 
-                <div className="fz-3-single-product__txt">
-  <span
-    className="fz-3-single-product__title"
-    title={item.name}
-    style={{ cursor: "default" }} 
-  >
-    {item.name}
-  </span>
-                  <p className="fz-3-single-product__price">
-                    <span className="current-price">
-                      Q{item.salePrice.toFixed(2)}
+                  <div className="fz-3-single-product__txt">
+                    <span
+                      className="fz-3-single-product__title"
+                      title={item.name}
+                      style={{ cursor: "default" }}
+                    >
+                      {item.name}
                     </span>
-                  </p>
-                  <p className="fz-3-single-product__description">
-                    {item.description.length > 50
-                      ? `${item.description.substring(0, 50)}...`
-                      : item.description}
-                  </p>
-                </div>
-              </SwiperSlide>
-            ))}
+                    <p className="fz-3-single-product__price">
+                      <span className="current-price">
+                        Q{item.salePrice.toFixed(2)}
+                      </span>
+                    </p>
+                    <p className="fz-3-single-product__description">
+                      {item.description.length > 50
+                        ? `${item.description.substring(0, 50)}...`
+                        : item.description}
+                    </p>
+                  </div>
+                </SwiperSlide>
+              ))}
           </Swiper>
         </div>
       </section>

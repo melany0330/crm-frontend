@@ -10,10 +10,8 @@ const PROTOCOL =
 const HOST =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_NAME) ||
   (isBrowser ? window.location.hostname : "localhost");
-const PORT =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_PORT) || "8080";
 
-const BASE_URL = `${PROTOCOL}://${HOST}:${PORT}`;
+const BASE_URL = `${PROTOCOL}://${HOST}`;
 
 // ===== Helpers de autenticación =====
 export function getAuthToken() {
@@ -22,7 +20,7 @@ export function getAuthToken() {
       const t = APIUtil.getAuthToken();
       if (t) return t;
     }
-  } catch {}
+  } catch { }
   if (!isBrowser) return null;
   return (
     localStorage.getItem("authToken") ||
@@ -49,7 +47,7 @@ export function getAuthUserName() {
       const u = APIUtil.getAuthUserName();
       if (u) return u;
     }
-  } catch {}
+  } catch { }
   // 2) localStorage guardado por tu AuthService
   if (isBrowser) {
     const u = localStorage.getItem("user");
@@ -68,7 +66,7 @@ export function getAuthUserId() {
       const id = APIUtil.getAuthUserId();
       if (id) return Number(id);
     }
-  } catch {}
+  } catch { }
   // 2) localStorage (si alguna vez lo guardaste)
   if (isBrowser) {
     const key =
