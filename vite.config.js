@@ -13,5 +13,14 @@ export default defineConfig({
   },
   define: {
     'process.env': process.env
+  },
+  server: {
+    proxy: {
+      '/prod/api': {
+        target: 'https://dsfeu6p464.execute-api.us-east-2.amazonaws.com',
+        changeOrigin: true,
+        secure: true
+      }
+    }
   }
 })

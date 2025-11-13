@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}:${import.meta.env.VITE_WMS_PORT}`;
+const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}`;
 const getImageUrl = (path) => (path ? `${BASE_URL}${path}` : "/placeholder.png");
 
 const CartItemTable = ({ cartArray, remove, quantity, getDiscountForItem }) => {

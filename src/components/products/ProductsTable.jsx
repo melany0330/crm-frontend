@@ -6,9 +6,7 @@ import AddProductModal from '../modals/AddProductModal'
 import ConfirmModal from '../modals/confirmModal'
 import { getProducts, getCategories, changeProductStatus } from '../../service/products/productService';
 
-const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}:${import.meta.env.VITE_WMS_PORT}`;
-
-const ProductsTable = () => {
+const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}`; const ProductsTable = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,25 +16,25 @@ const ProductsTable = () => {
   const [productToChangeStatus, setProductToChangeStatus] = useState(null);
   const [actionType, setActionType] = useState('deactivate');
 
-const fetchProducts = async () => {
-  try {
-    const data = await getProducts();
-    setProducts(data);
-  } catch {
-    toast.error('Error al cargar productos');
-  } finally {
-    setLoading(false);
-  }
-};
+  const fetchProducts = async () => {
+    try {
+      const data = await getProducts();
+      setProducts(data);
+    } catch {
+      toast.error('Error al cargar productos');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const fetchCategories = async () => {
-  try {
-    const data = await getCategories();
-    setCategories(data);
-  } catch {
-    toast.error('Error al cargar categorías');
-  }
-};
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+      setCategories(data);
+    } catch {
+      toast.error('Error al cargar categorías');
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -48,18 +46,18 @@ const fetchCategories = async () => {
     return found ? found.categoryName : 'Sin categoría';
   };
 
-const handleStatusChange = async () => {
-  try {
-    await changeProductStatus(productToChangeStatus.idProduct, actionType);
-    toast.success(`Producto ${actionType === 'deactivate' ? 'desactivado' : 'activado'}`);
-    fetchProducts();
-  } catch {
-    toast.error(`No fue posible ${actionType === 'deactivate' ? 'desactivar' : 'activar'} el producto`);
-  } finally {
-    setConfirmOpen(false);
-    setProductToChangeStatus(null);
-  }
-};
+  const handleStatusChange = async () => {
+    try {
+      await changeProductStatus(productToChangeStatus.idProduct, actionType);
+      toast.success(`Producto ${actionType === 'deactivate' ? 'desactivado' : 'activado'}`);
+      fetchProducts();
+    } catch {
+      toast.error(`No fue posible ${actionType === 'deactivate' ? 'desactivar' : 'activar'} el producto`);
+    } finally {
+      setConfirmOpen(false);
+      setProductToChangeStatus(null);
+    }
+  };
 
   return (
     <div className="wishlist-table">
@@ -93,12 +91,12 @@ const handleStatusChange = async () => {
           ) : (
             products.map((item) => (
               <tr key={item.idProduct}>
-               <td>
-  <div className="multiline-cell name">{item.name}</div>
-</td>
-<td>
-  <div className="multiline-cell description">{item.description}</div>
-</td>
+                <td>
+                  <div className="multiline-cell name">{item.name}</div>
+                </td>
+                <td>
+                  <div className="multiline-cell description">{item.description}</div>
+                </td>
                 <td>Q{item.salePrice}</td>
                 <td>Q{item.purchasePrice}</td>
                 <td>{getCategoryName(item.idCategory)}</td>
@@ -118,30 +116,30 @@ const handleStatusChange = async () => {
                 </td>
                 <td>
                   <div className="action-group">
-                  <button className="action-btn edit" onClick={() => {
-                    setEditingProduct(item);
-                    setModalOpen(true);
-                  }}>
-                    <MdEditSquare size={22} />
-                  </button>
+                    <button className="action-btn edit" onClick={() => {
+                      setEditingProduct(item);
+                      setModalOpen(true);
+                    }}>
+                      <MdEditSquare size={22} />
+                    </button>
 
-                  {item.status ? (
-                    <button className="action-btn delete" onClick={() => {
-                      setProductToChangeStatus(item);
-                      setActionType('deactivate');
-                      setConfirmOpen(true);
-                    }}>
-                      <MdOutlineDeleteOutline size={22} />
-                    </button>
-                  ) : (
-                    <button className="action-btn activate" onClick={() => {
-                      setProductToChangeStatus(item);
-                      setActionType('activate');
-                      setConfirmOpen(true);
-                    }}>
-                      <MdReplay size={22} />
-                    </button>
-                  )}
+                    {item.status ? (
+                      <button className="action-btn delete" onClick={() => {
+                        setProductToChangeStatus(item);
+                        setActionType('deactivate');
+                        setConfirmOpen(true);
+                      }}>
+                        <MdOutlineDeleteOutline size={22} />
+                      </button>
+                    ) : (
+                      <button className="action-btn activate" onClick={() => {
+                        setProductToChangeStatus(item);
+                        setActionType('activate');
+                        setConfirmOpen(true);
+                      }}>
+                        <MdReplay size={22} />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>

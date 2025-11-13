@@ -3,10 +3,8 @@ import { ProductContext } from '../../context/ProductContext';
 import { CartContext } from '../../context/CartContext';
 import { Link } from 'react-router-dom';
 
-const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}:${import.meta.env.VITE_WMS_PORT}`;
-const getImageUrl = (path) => path ? `${BASE_URL}${path}` : '/placeholder.png';
-
-const ProductContainer = () => {
+const BASE_URL = `${import.meta.env.VITE_WMS_PROTOCOL}://${import.meta.env.VITE_WMS_NAME}`;
+const getImageUrl = (path) => path ? `${BASE_URL}${path}` : '/placeholder.png'; const ProductContainer = () => {
   const { paginatedProducts, loading, isListView } = useContext(ProductContext);
   const { addItem } = useContext(CartContext);
 
