@@ -5,19 +5,16 @@ const isBrowser = typeof window !== "undefined";
 
 // Determinar BASE_URL según el entorno
 const BASE_URL = (() => {
-  // En desarrollo (Vite dev server)
+  // En desarrollo (Vite dev server) - usar proxy
   if (import.meta.env.DEV) {
     return ""; // Usa el proxy de Vite
   }
-  // En producción (Vercel)
+
+  // En producción - siempre usar path relativo para Vercel rewrites
   if (import.meta.env.PROD) {
-    // Si estamos en Vercel, usar rewrites (path relativo)
-    if (isBrowser && window.location.hostname.includes('vercel.app')) {
-      return ""; // Usa los rewrites de Vercel
-    }
-    // Fallback: URL directa de AWS
-    return import.meta.env.VITE_API_URL || "https://dsfeu6p464.execute-api.us-east-2.amazonaws.com/prod";
+    return ""; // Usa los rewrites de Vercel
   }
+
   return "";
 })();
 
@@ -128,13 +125,17 @@ class ServerService {
     const headers = ServerService.#createHeaders(token, customHeaders);
     const finalUrl = `${BASE_URL}${url}`;
 
-    console.log(`🔍 Request:`, {
+    console.log(`🔍 Request Debug:`, {
       mode: import.meta.env.MODE,
+      isDev: import.meta.env.DEV,
+      isProd: import.meta.env.PROD,
       method,
       originalUrl: url,
       finalUrl,
+      BASE_URL,
       hasToken: !!token,
-      hostname: isBrowser ? window.location.hostname : "no browser"
+      hostname: isBrowser ? window.location.hostname : "no browser",
+      viteApiUrl: import.meta.env.VITE_API_URL
     });
 
     return axios({
