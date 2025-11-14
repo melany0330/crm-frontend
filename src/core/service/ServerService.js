@@ -5,9 +5,13 @@ import APIUtil from "../system/APIUtil";
 const isBrowser = typeof window !== "undefined";
 
 // ===== Config de base (Vite + fallback) =====
-// En producción (Vercel), usar rutas relativas que serán proxeadas
-// En desarrollo, usar la URL completa del backend
-const isProduction = typeof import.meta !== "undefined" && import.meta.env?.PROD;
+// Detección robusta del entorno
+const isProduction =
+  (typeof import.meta !== "undefined" && import.meta.env?.PROD) ||
+  (isBrowser && (
+    window.location.hostname.includes('vercel.app') ||
+    window.location.hostname !== 'localhost'
+  ));
 
 let BASE_URL;
 if (isProduction) {
@@ -109,7 +113,7 @@ class ServerService {
   ) {
     const headers = ServerService.#createHeaders(token, customHeaders);
     const finalUrl = `${BASE_URL}${url}`;
-    
+
     // Debug log temporal para verificar URLs
     console.log(`🔍 ServerService Debug:`, {
       isProduction,
@@ -118,7 +122,7 @@ class ServerService {
       finalUrl,
       env: typeof import.meta !== "undefined" ? import.meta.env : "no meta"
     });
-    
+
     return axios({ method, url: finalUrl, data, headers, ...config });
   }
 
