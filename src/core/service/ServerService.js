@@ -5,9 +5,9 @@ import APIUtil from "../system/APIUtil";
 const isBrowser = typeof window !== "undefined";
 
 // ===== Config de base (Vite + fallback) =====
-// Usar rutas relativas tanto en desarrollo como en producción
-// para aprovechar los proxies de Vite (dev) y Vercel (prod)
-const BASE_URL = "";
+// En producción (Vercel), usar la URL de AWS directamente
+// En desarrollo (Vite), usar el proxy
+const BASE_URL = import.meta.env.VITE_API_URL || "";
 
 // ===== Helpers de autenticación =====
 export function getAuthToken() {
@@ -102,7 +102,7 @@ class ServerService {
       originalUrl: url,
       finalUrl,
       hostname: isBrowser ? window.location.hostname : "no browser",
-      env: typeof import.meta !== "undefined" ? import.meta.env : "no meta"
+      env: import.meta.env.VITE_API_URL
     });
 
     return axios({ method, url: finalUrl, data, headers, ...config });
