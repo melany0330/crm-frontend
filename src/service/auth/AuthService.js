@@ -11,15 +11,25 @@ class AuthService {
             userName: username,
             password: password
         };
-        // Usar la variable de entorno con fallback
-        const authPath = import.meta.env.VITE_WMS_API_AUTH || '/api/auth';
-        return this.serverService.send(`${authPath}/login`, 'POST', null, data);
+        return this.serverService.send('/api/auth/login', 'POST', null, data);
+    }
+
+    register(username, password, roleId = 1) {
+        const data = {
+            userName: username,
+            password: password,
+            role: roleId
+        };
+        return this.serverService.send('/api/auth/register', 'POST', null, data);
     }
 
     logout() {
         const token = this.getToken();
-        const authPath = import.meta.env.VITE_WMS_API_AUTH || '/api/auth';
-        return this.serverService.authSend(`${authPath}/logout`, 'POST');
+        return this.serverService.authSend('/api/auth/logout', 'POST');
+    }
+
+    refreshToken() {
+        return this.serverService.authSend('/api/auth/refresh', 'POST');
     }
 
     saveToken(token) {

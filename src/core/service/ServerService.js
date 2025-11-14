@@ -1,13 +1,25 @@
-// src/core/service/ServerService.js
 import axios from "axios";
 import APIUtil from "../system/APIUtil";
 
 const isBrowser = typeof window !== "undefined";
 
-// ===== Config de base (Vite + fallback) =====
-// En producción (Vercel), usar la URL de AWS directamente
-// En desarrollo (Vite), usar el proxy
-const BASE_URL = import.meta.env.VITE_API_URL || "";
+// Determinar BASE_URL según el entorno
+const BASE_URL = (() => {
+  // En desarrollo (Vite dev server)
+  if (import.meta.env.DEV) {
+    return ""; // Usa el proxy de Vite
+  }
+  // En producción (Vercel)
+  if (import.meta.env.PROD) {
+    // Si estamos en Vercel, usar rewrites (path relativo)
+    if (isBrowser && window.location.hostname.includes('vercel.app')) {
+      return ""; // Usa los rewrites de Vercel
+    }
+    // Fallback: URL directa de AWS
+    return import.meta.env.VITE_API_URL || "https://dsfeu6p464.execute-api.us-east-2.amazonaws.com/prod";
+  }
+  return "";
+})();
 
 // ===== Helpers de autenticación =====
 export function getAuthToken() {
@@ -37,33 +49,28 @@ function decodeJwtPayload(token) {
 }
 
 export function getAuthUserName() {
-  // 1) APIUtil si existe
   try {
     if (APIUtil && typeof APIUtil.getAuthUserName === "function") {
       const u = APIUtil.getAuthUserName();
       if (u) return u;
     }
   } catch { }
-  // 2) localStorage guardado por tu AuthService
   if (isBrowser) {
     const u = localStorage.getItem("user");
     if (u) return u;
   }
-  // 3) intenta del JWT (claims comunes: username, preferred_username)
   const t = getAuthToken();
   const p = t ? decodeJwtPayload(t) : null;
-  return p?.username || p?.preferred_username || null;
+  return p?.sub || p?.username || p?.preferred_username || null;
 }
 
 export function getAuthUserId() {
-  // 1) APIUtil si existe
   try {
     if (APIUtil && typeof APIUtil.getAuthUserId === "function") {
       const id = APIUtil.getAuthUserId();
       if (id) return Number(id);
     }
   } catch { }
-  // 2) localStorage (si alguna vez lo guardaste)
   if (isBrowser) {
     const key =
       localStorage.getItem("userId") ||
@@ -71,11 +78,36 @@ export function getAuthUserId() {
       localStorage.getItem("idUsuario");
     if (key) return Number(key);
   }
-  // 3) intenta del JWT (claims comunes)
   const t = getAuthToken();
   const p = t ? decodeJwtPayload(t) : null;
+
+  // Tu JWT usa "jti" para el ID (en binario)
+  if (p?.jti) {
+    try {
+      return parseInt(p.jti, 2); // Convertir de binario a decimal
+    } catch {
+      return null;
+    }
+  }
+
   const guess = p?.id ?? p?.userId ?? p?.idUser ?? p?.idUsuario ?? p?.sub;
   return guess ? Number(guess) : null;
+}
+
+export function getAuthUserRole() {
+  const t = getAuthToken();
+  const p = t ? decodeJwtPayload(t) : null;
+
+  // Tu JWT usa "ri" para el role ID (en binario)
+  if (p?.ri) {
+    try {
+      return parseInt(p.ri, 2); // Convertir de binario a decimal
+    } catch {
+      return null;
+    }
+  }
+
+  return p?.role || p?.roleId || null;
 }
 
 // ===== Servicio HTTP =====
@@ -96,16 +128,23 @@ class ServerService {
     const headers = ServerService.#createHeaders(token, customHeaders);
     const finalUrl = `${BASE_URL}${url}`;
 
-    // Debug log temporal para verificar URLs
-    console.log(`🔍 ServerService Debug:`, {
-      BASE_URL,
+    console.log(`🔍 Request:`, {
+      mode: import.meta.env.MODE,
+      method,
       originalUrl: url,
       finalUrl,
-      hostname: isBrowser ? window.location.hostname : "no browser",
-      env: import.meta.env.VITE_API_URL
+      hasToken: !!token,
+      hostname: isBrowser ? window.location.hostname : "no browser"
     });
 
-    return axios({ method, url: finalUrl, data, headers, ...config });
+    return axios({
+      method,
+      url: finalUrl,
+      data,
+      headers,
+      withCredentials: true, // Importante para CORS con credentials
+      ...config
+    });
   }
 
   static #createHeaders(token, customHeaders) {
