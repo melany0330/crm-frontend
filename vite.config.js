@@ -16,8 +16,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/prod/api': {
-        target: 'https://dsfeu6p464.execute-api.us-east-2.amazonaws.com',
+      '/api': {
+        target: 'https://dsfeu6p464.execute-api.us-east-2.amazonaws.com/prod',
         changeOrigin: true,
         secure: true
       }
