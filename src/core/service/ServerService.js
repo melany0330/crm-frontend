@@ -5,27 +5,9 @@ import APIUtil from "../system/APIUtil";
 const isBrowser = typeof window !== "undefined";
 
 // ===== Config de base (Vite + fallback) =====
-// Detección robusta del entorno
-const isProduction =
-  (typeof import.meta !== "undefined" && import.meta.env?.PROD) ||
-  (isBrowser && (
-    window.location.hostname.includes('vercel.app') ||
-    window.location.hostname !== 'localhost'
-  ));
-
-let BASE_URL;
-if (isProduction) {
-  // En producción, usar rutas relativas que Vercel proxeará
-  BASE_URL = "";
-} else {
-  // En desarrollo, usar la configuración original
-  const PROTOCOL =
-    (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_PROTOCOL) || "http";
-  const HOST =
-    (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_NAME) ||
-    (isBrowser ? window.location.hostname : "localhost");
-  BASE_URL = `${PROTOCOL}://${HOST}`;
-}
+// Usar rutas relativas tanto en desarrollo como en producción
+// para aprovechar los proxies de Vite (dev) y Vercel (prod)
+const BASE_URL = "";
 
 // ===== Helpers de autenticación =====
 export function getAuthToken() {
@@ -116,10 +98,10 @@ class ServerService {
 
     // Debug log temporal para verificar URLs
     console.log(`🔍 ServerService Debug:`, {
-      isProduction,
       BASE_URL,
       originalUrl: url,
       finalUrl,
+      hostname: isBrowser ? window.location.hostname : "no browser",
       env: typeof import.meta !== "undefined" ? import.meta.env : "no meta"
     });
 
