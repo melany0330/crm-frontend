@@ -5,13 +5,23 @@ import APIUtil from "../system/APIUtil";
 const isBrowser = typeof window !== "undefined";
 
 // ===== Config de base (Vite + fallback) =====
-const PROTOCOL =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_PROTOCOL) || "http";
-const HOST =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_NAME) ||
-  (isBrowser ? window.location.hostname : "localhost");
+// En producción (Vercel), usar rutas relativas que serán proxeadas
+// En desarrollo, usar la URL completa del backend
+const isProduction = typeof import.meta !== "undefined" && import.meta.env?.PROD;
 
-const BASE_URL = `${PROTOCOL}://${HOST}`;
+let BASE_URL;
+if (isProduction) {
+  // En producción, usar rutas relativas que Vercel proxeará
+  BASE_URL = "";
+} else {
+  // En desarrollo, usar la configuración original
+  const PROTOCOL =
+    (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_PROTOCOL) || "http";
+  const HOST =
+    (typeof import.meta !== "undefined" && import.meta.env?.VITE_WMS_NAME) ||
+    (isBrowser ? window.location.hostname : "localhost");
+  BASE_URL = `${PROTOCOL}://${HOST}`;
+}
 
 // ===== Helpers de autenticación =====
 export function getAuthToken() {
