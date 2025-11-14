@@ -32,3 +32,4 @@ coverage/
 # Misceláneos
 .env
 .env.*.local
+.vercel
