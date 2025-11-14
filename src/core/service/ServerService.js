@@ -108,7 +108,18 @@ class ServerService {
     config = {}
   ) {
     const headers = ServerService.#createHeaders(token, customHeaders);
-    return axios({ method, url: `${BASE_URL}${url}`, data, headers, ...config });
+    const finalUrl = `${BASE_URL}${url}`;
+    
+    // Debug log temporal para verificar URLs
+    console.log(`🔍 ServerService Debug:`, {
+      isProduction,
+      BASE_URL,
+      originalUrl: url,
+      finalUrl,
+      env: typeof import.meta !== "undefined" ? import.meta.env : "no meta"
+    });
+    
+    return axios({ method, url: finalUrl, data, headers, ...config });
   }
 
   static #createHeaders(token, customHeaders) {
